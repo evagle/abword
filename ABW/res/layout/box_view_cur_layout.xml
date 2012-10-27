@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:gravity="center" >
+
+        <TextView
+            android:id="@+id/box_view_lock_unit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginRight="8dp"
+            android:gravity="center_horizontal"
+            android:text="Unit"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/box_view_lock_unit_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:text="1"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:textStyle="bold" >
+        </TextView>
+    </TableRow>
+<TableRow
+	    android:layout_width="match_parent"
+	    android:layout_height="30dp"
+	    android:layout_gravity="center"
+	    android:gravity="center" 
+	    android:visibility="gone">
+        <ImageView 
+            android:id="@+id/box_view_lock_lock"
+            android:layout_width="30dp"
+        	android:layout_height="30dp"
+        	android:layout_gravity="center"
+        	android:gravity="center"
+            />
+      </TableRow>
+
+    <TextView
+        android:id="@+id/box_view_word"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/box_view_phonogram"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center_horizontal"
+        android:textColor="#000000"
+        android:textSize="18sp" 
+        />
+
+</LinearLayout>
