@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 未选中 -->
+    <item android:state_pressed="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/frag_rounding_radius" />
+            <gradient android:angle="270" android:endColor="@color/android_yellow" android:startColor="@color/android_light_yellow" />
+            <stroke android:width="1px" android:color="#F5DA81" />
+        </shape>
+    </item>
+    <!-- 选中 -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <corners android:radius="@dimen/frag_rounding_radius" />
+            <gradient android:angle="270" android:endColor="@color/android_light_yellow" android:startColor="@color/android_yellow" />
+            <stroke android:width="1px" android:color="#F5DA81" />
+        </shape>
+    </item>
+
+</selector>

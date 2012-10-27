@@ -82,6 +82,9 @@ public final class R {
         public static final int study_note=0x7f02002e;
         public static final int wordbg1=0x7f02002f;
         public static final int xpic6475=0x7f020030;
+        public static final int yellow_button=0x7f020031;
+        public static final int yellow_button_normal=0x7f020032;
+        public static final int yellow_button_pressed=0x7f020033;
     }
     public static final class id {
         public static final int adapter_load_dict_row_image=0x7f0a000a;

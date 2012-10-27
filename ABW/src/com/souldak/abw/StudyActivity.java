@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.text.Html;
@@ -21,8 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
@@ -38,7 +37,6 @@ import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
 import com.souldak.util.ABFileHelper;
 import com.souldak.util.TimeHelper;
-import com.souldak.view.ABActionBar;
 import com.souldak.view.ChartDialog;
 
 public class StudyActivity extends Activity implements ActivityInterface {
@@ -356,8 +354,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	public Button getButton(String text, int color, int width, int height,
 			int marginLeft, int marginRight) {
 		Button button = new Button(StudyActivity.this);
-		GradientDrawable background = (GradientDrawable) getResources()
-				.getDrawable(R.drawable.button);
+		Drawable background = (Drawable) getResources()
+				.getDrawable(R.drawable.yellow_button);
 		// background.setColor(getResources().getColor(color));
 		background.setAlpha(225);
 		// background.setGradientRadius(4);
