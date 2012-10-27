@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/chart_dialog_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="32dp"
+        android:layout_marginTop="32dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/chart_dialog_chart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/chart_dialog_show_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/chart_dialog_show_review_plan"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:text="Review Plan" >
+            </Button>
+
+            <Button
+                android:id="@+id/chart_dialog_show_process"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:text="Process" >
+            </Button>
+
+            <!--
+        Button
+            android:id="@+id/chart_dialog_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="close" >
+        </Button
+            -->
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
