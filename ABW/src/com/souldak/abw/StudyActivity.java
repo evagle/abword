@@ -95,7 +95,17 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		ABActionBar.getABActionBar(StudyActivity.this, menu);
+		//ABActionBar.getABActionBar(StudyActivity.this, menu);
+		this.getMenuInflater().inflate(R.menu.menu_study, menu);
+		MenuItem setting = menu.findItem(R.id.menu_settings);
+		MenuItem showChart = menu.findItem(R.id.menu_show_chart);
+		showChart.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			public boolean onMenuItemClick(MenuItem item) {
+				ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,unit);
+				chartDialog.show();
+				return true;
+			}
+		});
 		actionBar = getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
 				ActionBar.DISPLAY_HOME_AS_UP);

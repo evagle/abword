@@ -2,13 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="libs"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="libs/android-support-v4.jar"/>
-	<classpathentry kind="lib" path="libs/gson-2.2.2-javadoc.jar"/>
-	<classpathentry kind="lib" path="libs/gson-2.2.2-sources.jar"/>
-	<classpathentry kind="lib" path="libs/gson-2.2.2.jar"/>
-	<classpathentry kind="lib" path="libs/achartengine-1.0.0.jar"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="D:/Program Files/android-sdk-windows/platforms/android-4.1/android.jar">
 		<attributes>
@@ -18,5 +13,10 @@
 			<accessrule kind="nonaccessible" pattern="com/android/internal/**"/>
 		</accessrules>
 	</classpathentry>
+	<classpathentry kind="lib" path="libs/achartengine-1.0.0.jar"/>
+	<classpathentry kind="lib" path="libs/android-support-v4.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.2-javadoc.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.2-sources.jar"/>
+	<classpathentry kind="lib" path="libs/gson-2.2.2.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

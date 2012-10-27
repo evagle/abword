@@ -23,29 +23,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/chart_dialog_show_review_plan"
-                android:layout_width="wrap_content"
-                android:layout_height="80dp"
-                android:text="Review Plan" >
-            </Button>
-
             <Button
                 android:id="@+id/chart_dialog_show_process"
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:text="Process" >
+                android:text="背诵进度" >
+            </Button>
+            <Button
+                android:id="@+id/chart_dialog_show_review_plan"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:text="复习计划"   >
             </Button>
 
-            <!--
-        Button
-            android:id="@+id/chart_dialog_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="close" >
-        </Button
-            -->
+
+
+
         </LinearLayout>
     </LinearLayout>
 
