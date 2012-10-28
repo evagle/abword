@@ -1,7 +1,6 @@
 package com.souldak.abw;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import android.animation.ObjectAnimator;
@@ -18,30 +17,25 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
-import com.google.gson.Gson;
 import com.souldak.controler.DictManager;
-import com.souldak.controler.GlobalData;
 import com.souldak.db.WordDBHelper;
 import com.souldak.fragment.WordFragment;
 import com.souldak.model.Dict;
 import com.souldak.model.DictOld;
-import com.souldak.model.MemoRecord;
 import com.souldak.model.Unit;
-import com.souldak.model.WordItem;
-import com.souldak.util.ABFileHelper;
+import com.souldak.view.ABScrollView;
 import com.souldak.view.BoxView;
 import com.souldak.view.BoxView.BOX_TYPE;
 
-public class MainActivity extends Activity implements ActivityInterface {
+public class MainActivity extends Activity implements ActivityInterface{
 	private ActionBar actionBar;
 	private DictManager dictManager;
 	private DictOld currentDict;
 	private ArrayAdapter actionAdapter;
 	private List<String> dictNameList;
-	private String learningType;
-	private WordFragment wordFragment;
 	private Dict selectedDict;
 	private WordDBHelper wordDBHelper;
+	private ABScrollView scrollView;
 
 	@SuppressLint("NewApi")
 	@Override
@@ -64,21 +58,7 @@ public class MainActivity extends Activity implements ActivityInterface {
 		setting.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 
 			public boolean onMenuItemClick(MenuItem item) {
-				// TODO Auto-generated method stub
-				MemoRecord m = new MemoRecord();
-				m.setStartTime(new Date());
-				m.setTimedelta(10.3d);
-				m.setGrade(5);
-				WordItem word = new WordItem();
-				word.setId(123);
-				word.setWord("hello");
-				word.setMemoEffect(2d);
-				List<MemoRecord> l = new ArrayList<MemoRecord>();
-				l.add(m);
-				word.setMemoList(l);
-				Gson gson = new Gson();
-				String s = gson.toJson(word);
-				WordItem x = gson.fromJson(s, WordItem.class);
+ 
 				// tv.setText(ABFileHelper.list(Environment.getExternalStorageDirectory().getPath()+"/baidu/ime/skink").toString());
 				return false;
 			}
@@ -98,49 +78,28 @@ public class MainActivity extends Activity implements ActivityInterface {
 
 	@SuppressLint("NewApi")
 	public void initCompenents() {
+		scrollView = (ABScrollView) findViewById(R.id.scroll_container);
+		
 		dictManager = new DictManager(this);
-		wordFragment = new WordFragment("", "");
-
-		// LinearLayout row=new LinearLayout(this);
-		// FragmentTransaction ft = getFragmentManager().beginTransaction();
-		// ft.add(row.getId(), wordFragment);
-		// ft.add(row.getId(), new WordFragment("", ""));
-		// ft.commit();
-		// containerlayout.addView(row);
-		// row=new LinearLayout(this);
-		// ft = getFragmentManager().beginTransaction();
-		// ft.add(row.getId(), wordFragment);
-		// ft.add(row.getId(), new WordFragment("", ""));
-		// ft.commit();
-
+		
 		initActionBar();
 	}
 
 	public void initListeners() {
-		// TODO Auto-generated method stub
-
+		scrollView.getScrollY();
 	}
 
-	@SuppressWarnings("rawtypes")
 	@TargetApi(11)
 	public void initActionBar() {
 		actionBar = getActionBar();
-		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);// You
-																	// should
-																	// perform
-																	// this
-																	// during
-																	// your
-																	// activity's
-																	// onCreate()
-																	// method.
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
 		actionBar.setDisplayShowTitleEnabled(false);
 		OnNavigationListener mOnNavigationListener = new OnNavigationListener() {
 
 			public boolean onNavigationItemSelected(int position, long itemId) {
 				selectedDict = new Dict(MainActivity.this,
 						dictNameList.get(position));
-				int currentUnitPos = -1;
 				LinearLayout containerlayout = (LinearLayout) MainActivity.this
 						.findViewById(R.id.fragment_container);
 				containerlayout.removeAllViews();
@@ -155,7 +114,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 					boxTypeList.add(BOX_TYPE.BOX_MEMOED);
 				}
 				if (selectedDict.getCurrentUnit() != null) {
-					currentUnitPos = needShowUnitList.size();
 					needShowUnitList.add(selectedDict.getCurrentUnit());
 					colorList.add(getResources().getColor(
 							R.color.android_yellow));
@@ -171,97 +129,40 @@ public class MainActivity extends Activity implements ActivityInterface {
 				}
 
 				LinearLayout row = new LinearLayout(MainActivity.this);
-				if (needShowUnitList.size() <= 2) {
-					BoxView box = new BoxView(MainActivity.this,
-							needShowUnitList.get(0), 32, 32, 16, 16,
-							colorList.get(0), boxTypeList.get(0));
-					row.addView(box);
-					boxList.add(box);
-					if (needShowUnitList.size() == 2) {
-						box = new BoxView(MainActivity.this,
-								needShowUnitList.get(1), 16, 32, 32, 16,
-								colorList.get(1), boxTypeList.get(1));
+
+				for (int i = 0; i < needShowUnitList.size(); i += 2) {
+					row = new LinearLayout(MainActivity.this);
+					for(int col = i;col<=i+1&&col<needShowUnitList.size();col++){
+						BoxView box = generateBox(needShowUnitList.get(col),
+								colorList.get(col), boxTypeList.get(col), col + 1);
 						row.addView(box);
 						boxList.add(box);
 					}
 					containerlayout.addView(row);
-				} else {
-					// First two
-					BoxView box = new BoxView(MainActivity.this,
-							needShowUnitList.get(0), 32, 32, 16, 16,
-							colorList.get(0), boxTypeList.get(0));
-					row.addView(box);
-					boxList.add(box);
-					box = new BoxView(MainActivity.this,
-							needShowUnitList.get(1), 16, 32, 32, 16,
-							colorList.get(1), boxTypeList.get(1));
-					row.addView(box);
-					boxList.add(box);
-					containerlayout.addView(row);
-					// third,fourth....
-					int i = 2;
-					for (i = 2; i + 1 < needShowUnitList.size(); i += 2) {
-						row = new LinearLayout(MainActivity.this);
-						box = new BoxView(MainActivity.this,
-								needShowUnitList.get(i), 32, 16, 16, 16,
-								getResources().getColor(R.color.android_blue),
-								boxTypeList.get(i));
-						row.addView(box);
-						boxList.add(box);
-						box = new BoxView(MainActivity.this,
-								needShowUnitList.get(i + 1), 16, 16, 32, 16,
-								getResources().getColor(R.color.android_blue),
-								boxTypeList.get(i));
-						row.addView(box);
-						boxList.add(box);
-						containerlayout.addView(row);
-					}
-					// the last single one
-					if (i < needShowUnitList.size()) {
-						row = new LinearLayout(MainActivity.this);
-						box = new BoxView(MainActivity.this,
-								needShowUnitList.get(i), 32, 16, 16, 16,
-								getResources().getColor(R.color.android_blue),
-								boxTypeList.get(i));
-						row.addView(box);
-						boxList.add(box);
-						containerlayout.addView(row);
-					}
 				}
 
 				wordDBHelper = new WordDBHelper(needShowUnitList.get(0)
 						.getDictName());
 				for (int i = 0; i < boxList.size(); i++) {
 					final BoxView box = boxList.get(i);
-					final Unit iunit = needShowUnitList.get(i);
 					if (box.getType().equals(BOX_TYPE.BOX_LOCKED)) {
 						box.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
-//								if (iunit.getWords() == null)
-//									iunit.setWords(wordDBHelper
-//											.getTotalUnitWords(iunit
-//													.getUnitId()));
-//								box.setText(iunit.getUnitId() + "  "
-//										+ iunit.getTotalWordCount());
-								BoxView box= (BoxView)v;
+								BoxView box = (BoxView) v;
 								box.randomWord(wordDBHelper);
 								ObjectAnimator.ofFloat(v, "rotationY", 0, 180)
-								.setDuration(500).start();
-								ObjectAnimator.ofFloat(v, "rotationY", 180, 360)
-								.setDuration(500).start();
-//								ObjectAnimator alpha = ObjectAnimator.ofFloat(
-//										box, "alpha", 1f, 0f);
-//								alpha.setRepeatMode(ObjectAnimator.REVERSE);
-//								alpha.setRepeatCount(1);
-//								alpha.setDuration(800);
-//								alpha.start();
+										.setDuration(500).start();
+								ObjectAnimator
+										.ofFloat(v, "rotationY", 180, 360)
+										.setDuration(500).start();
+							 
 							}
 						});
-					}else if(box.getType().equals(BOX_TYPE.BOX_CURR)){
+					} else if (box.getType().equals(BOX_TYPE.BOX_CURR)) {
 						box.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
-							  
-								BoxView box= (BoxView)v;
+
+								BoxView box = (BoxView) v;
 								box.randomWord(wordDBHelper);
 								ObjectAnimator alpha = ObjectAnimator.ofFloat(
 										box, "alpha", 1f, 0f);
@@ -269,13 +170,16 @@ public class MainActivity extends Activity implements ActivityInterface {
 								alpha.setRepeatCount(1);
 								alpha.setDuration(800);
 								alpha.start();
-								Intent intent = new Intent(MainActivity.this,StudyActivity.class);
+								Intent intent = new Intent(MainActivity.this,
+										StudyActivity.class);
 								Bundle bundle = new Bundle();
-								bundle.putString("dictName", box.getUnit().getDictName());
-								bundle.putInt("unitId", box.getUnit().getUnitId());
+								bundle.putString("dictName", box.getUnit()
+										.getDictName());
+								bundle.putInt("unitId", box.getUnit()
+										.getUnitId());
 								intent.putExtras(bundle);
 								startActivity(intent);
-//								
+								//
 							}
 						});
 					}
@@ -291,6 +195,24 @@ public class MainActivity extends Activity implements ActivityInterface {
 		actionBar.setListNavigationCallbacks(actionAdapter,
 				mOnNavigationListener);
 
+	}
+	
+	private BoxView generateBox(Unit iunit, int color, BOX_TYPE type, int num) {
+		int margin = 48;
+		int marginHalf = 24;
+		if (num == 1) {
+			return new BoxView(MainActivity.this, iunit, margin, margin,
+					marginHalf, marginHalf, color, type);
+		} else if (num == 2) {
+			return new BoxView(MainActivity.this, iunit, marginHalf, margin,
+					margin, marginHalf, color, type);
+		} else if (num % 2 == 1) {
+			return new BoxView(MainActivity.this, iunit, margin, marginHalf,
+					marginHalf, marginHalf, color, type);
+		} else {
+			return new BoxView(MainActivity.this, iunit, marginHalf,
+					marginHalf, margin, marginHalf, color, type);
+		}
 	}
 
 }

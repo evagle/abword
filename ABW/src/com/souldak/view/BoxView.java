@@ -99,7 +99,7 @@ public class BoxView extends LinearLayout{
 		background.setColor(color);
 		background.setAlpha(225);
 		mView.setBackground(background);
-		int len = (context.getResources().getDisplayMetrics().widthPixels-32*3)/2;
+		int len = (context.getResources().getDisplayMetrics().widthPixels-48*3)/2;
 		LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(len,
 				len);
 		lp.setMargins(marginLeft, marginTop, marginRight, marginBottom);

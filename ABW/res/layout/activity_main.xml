@@ -3,29 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <!--
-          TextView
-        android:id="@+id/text_main"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:padding="@dimen/padding_medium"
-        android:text="@string/hello_world"
-        tools:context=".MainActivity" /
-    -->
-
-    <ScrollView
+    <com.souldak.view.ABScrollView
         android:id="@+id/scroll_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="outsideInset"
+         >
+
         <LinearLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical" >
         </LinearLayout>
-    </ScrollView>
+    </com.souldak.view.ABScrollView>
 
 </LinearLayout>

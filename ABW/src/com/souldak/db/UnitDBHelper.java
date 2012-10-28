@@ -21,6 +21,7 @@ public class UnitDBHelper {
 	private static final String DICT = "dict";
 	private static final String TOTAL_WORD_COUNT = "total_word_count";
 	private static final String MEMOED_WORD_COUNT = "memoed_word_count";
+	private static final String DELEGATE_WORD = "delegated_word";
 	private static String createSqlStr;
 	
 
@@ -30,8 +31,8 @@ public class UnitDBHelper {
 		createSqlStr =  "CREATE TABLE "
 				+ this.tableName
 				+ " (unit_id integer not null, dict text not null," +
-				" total_word_count integer not null, memoed_word_count integer not null"
-				+ ");";
+				TOTAL_WORD_COUNT+" integer not null, "+MEMOED_WORD_COUNT+" integer not null,"
+				+ DELEGATE_WORD+" text);";
 		baseDBHelper = new BaseDBHelper(this.tableName,createSqlStr);
 	}
 	public void close(){
@@ -43,6 +44,7 @@ public class UnitDBHelper {
 		values.put(DICT, unit.getDictName());
 		values.put(TOTAL_WORD_COUNT, unit.getTotalWordCount());
 		values.put(MEMOED_WORD_COUNT, unit.getMemoedCount());
+		values.put(DELEGATE_WORD, new Gson().toJson(unit.getDelegatedWord()));
 		return values;
 	}
 	public boolean insert(Unit unit) {
@@ -82,10 +84,13 @@ public class UnitDBHelper {
 			int dictIndex = cursor.getColumnIndex(DICT);
 			int totalWordCountIndex = cursor.getColumnIndex(TOTAL_WORD_COUNT);
 			int memoedWordCountIndex = cursor.getColumnIndex(MEMOED_WORD_COUNT);
+			int delegateWordIndex = cursor.getColumnIndex(DELEGATE_WORD);
 			unit.setUnitId(cursor.getInt(unitIdIndex)) ;
 			unit.setDictName(cursor.getString(dictIndex));
 			unit.setTotalWordCount(cursor.getInt(totalWordCountIndex));
 			unit.setMemoedCount(cursor.getInt(memoedWordCountIndex));
+			unit.setDelegatedWord(new Gson().fromJson(
+					cursor.getString(delegateWordIndex),WordItem.class));
 		} catch (Exception ex) {
 			Log.e("UnitDBHelper",
 					"getOne  from cursor failed!" + ex.getMessage());
@@ -120,16 +125,16 @@ public class UnitDBHelper {
 			return unitList;
 		}
 		Unit tmp = getOne(cursor);
-		if (tmp != null){
+		if (tmp != null&&tmp.getDelegatedWord()==null){
 			getDelegateWord(tmp);
-			unitList.add(tmp);
 		}
+		unitList.add(tmp);
 		while (cursor.moveToNext()) {
 			tmp = getOne(cursor);
-			if (tmp != null){
+			if (tmp != null&&tmp.getDelegatedWord()==null){
 				getDelegateWord(tmp);
-				unitList.add(tmp);
 			}
+			unitList.add(tmp);
 		}
 		cursor.close();
 		Log.d("UnitDBHelper", "get " + unitList.size()
