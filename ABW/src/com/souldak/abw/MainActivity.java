@@ -21,8 +21,8 @@ import com.souldak.controler.DictManager;
 import com.souldak.db.WordDBHelper;
 import com.souldak.fragment.WordFragment;
 import com.souldak.model.Dict;
-import com.souldak.model.DictOld;
 import com.souldak.model.Unit;
+import com.souldak.util.SharePreferenceHelper;
 import com.souldak.view.ABScrollView;
 import com.souldak.view.BoxView;
 import com.souldak.view.BoxView.BOX_TYPE;
@@ -30,7 +30,7 @@ import com.souldak.view.BoxView.BOX_TYPE;
 public class MainActivity extends Activity implements ActivityInterface{
 	private ActionBar actionBar;
 	private DictManager dictManager;
-	private DictOld currentDict;
+	private Dict currentDict;
 	private ArrayAdapter actionAdapter;
 	private List<String> dictNameList;
 	private Dict selectedDict;
@@ -98,8 +98,18 @@ public class MainActivity extends Activity implements ActivityInterface{
 		OnNavigationListener mOnNavigationListener = new OnNavigationListener() {
 
 			public boolean onNavigationItemSelected(int position, long itemId) {
-				selectedDict = new Dict(MainActivity.this,
-						dictNameList.get(position));
+				String unitIdStr = ((String)SharePreferenceHelper.getPreferences(dictNameList.get(position),
+						MainActivity.this));
+				if(unitIdStr == null){
+					selectedDict = new Dict(MainActivity.this,
+							dictNameList.get(position));
+					SharePreferenceHelper.savePreferences(dictNameList.get(position), 
+							selectedDict.getCurrentUnit().getUnitId()+"", MainActivity.this);
+				}else{
+					int unitid = Integer.parseInt(unitIdStr);
+					
+				}
+				
 				LinearLayout containerlayout = (LinearLayout) MainActivity.this
 						.findViewById(R.id.fragment_container);
 				containerlayout.removeAllViews();

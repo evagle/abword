@@ -51,11 +51,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private int screenHeight;
 	private int marginPixels;
 	private int buttonHeight;
-	// private ProgressBar progressBar;
 	private Typeface dejaVuSans;
 	private Unit unit;
-	private WordDBHelper wordDBHelper;
-	private UnitDBHelper unitDBHelper;
 	private StudyControler controler;
 	private STUDY_TYPE studyType;
 	private STUDY_STATE studyState;
@@ -72,13 +69,15 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		studyType = STUDY_TYPE.LEARN_NEW;
 		studyState = STUDY_STATE.SHOW_ANSWER;
 
-		unitDBHelper = new UnitDBHelper(dictName);
-		wordDBHelper = new WordDBHelper(dictName);
+		UnitDBHelper unitDBHelper = new UnitDBHelper(dictName);
+		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
 		unit = unitDBHelper.getUnit(unitId, dictName);
 		unit.setWords(wordDBHelper.getTotalUnitWords(unitId));
 		unit.initWordsList();
-
-		controler = new StudyControler(unit, wordDBHelper, unitDBHelper);
+		unitDBHelper.close();
+		wordDBHelper.close();
+		
+		controler = new StudyControler(unit);
 		effectMap.put("GOOD", 5);
 		effectMap.put("PASS", 3);
 		effectMap.put("BAD", 0);
@@ -89,7 +88,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		onStateChange();
 
 	}
-
+ 
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

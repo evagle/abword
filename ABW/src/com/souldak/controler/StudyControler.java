@@ -12,12 +12,8 @@ public class StudyControler {
 	private Unit unit;
 	private int showedPosition;
 	private WordItem current;
-	private WordDBHelper wordDBHelper;
-	private UnitDBHelper unitDBHelper;
-	public StudyControler(Unit unit,WordDBHelper wordDBHelper,UnitDBHelper unitDBHelper){
+	public StudyControler(Unit unit ){
 		this.unit = unit;
-		this.wordDBHelper = wordDBHelper;
-		this.unitDBHelper = unitDBHelper;
 		showedPosition = 0;
 		
 	}
@@ -69,11 +65,14 @@ public class StudyControler {
 		}
 	}
 	public void finishMemoWord(WordItem w,Date startTime,double timeDelta,int grade){
+		UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
+		WordDBHelper wordDBHelper = new WordDBHelper(unit.getDictName());
 		w.addMemoRecord(startTime, timeDelta, grade);
 		wordDBHelper.update(w);
 		unit.addMemodCount();
 		unitDBHelper.update(unit);
-		
+		unitDBHelper.close();
+		wordDBHelper.close();
 //		words.put(w.getWord(), w);
 //		oldWords.add(w);
 //		

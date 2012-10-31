@@ -44,7 +44,7 @@ public class UnitDBHelper {
 		values.put(DICT, unit.getDictName());
 		values.put(TOTAL_WORD_COUNT, unit.getTotalWordCount());
 		values.put(MEMOED_WORD_COUNT, unit.getMemoedCount());
-		values.put(DELEGATE_WORD, new Gson().toJson(unit.getDelegatedWord()));
+		values.put(DELEGATE_WORD, unit.getDelegatedWord().getWord());
 		return values;
 	}
 	public boolean insert(Unit unit) {
@@ -89,8 +89,9 @@ public class UnitDBHelper {
 			unit.setDictName(cursor.getString(dictIndex));
 			unit.setTotalWordCount(cursor.getInt(totalWordCountIndex));
 			unit.setMemoedCount(cursor.getInt(memoedWordCountIndex));
-			unit.setDelegatedWord(new Gson().fromJson(
-					cursor.getString(delegateWordIndex),WordItem.class));
+			WordItem delegateWord = new WordItem();
+			delegateWord.setWord(cursor.getString(delegateWordIndex));
+			unit.setDelegatedWord(delegateWord);
 		} catch (Exception ex) {
 			Log.e("UnitDBHelper",
 					"getOne  from cursor failed!" + ex.getMessage());
@@ -142,6 +143,7 @@ public class UnitDBHelper {
 		return unitList;
 	}
 	public void getDelegateWord(Unit unit){
+		Log.d("UnitDBHelper", "get delegate word of unit "+unit.getUnitId());
 		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
 		WordItem delegate=wordDBHelper.getRandomWordOfUnit(unit.getUnitId());
 		unit.setDelegatedWord(delegate);

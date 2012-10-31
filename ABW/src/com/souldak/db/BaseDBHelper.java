@@ -59,7 +59,9 @@ public class BaseDBHelper {
 					"Create table " + table + " failed" + " ." + e.getMessage());
 		}
 	}
-
+	public void execSQL(String sql){
+		db.execSQL(sql);
+	}
 	public void deleteTable( ) {
 		// SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
 		// Configure.DATABASE_DICT_STORAGE, null);

@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.text.Position;
-
-import com.souldak.config.ConstantValue.STUDY_TYPE;
-
-public class Unit {
+public class Unit implements Comparable<Unit>{
 	private int unitId;
 	private String dictName;
 	private int totalWordCount;
@@ -127,6 +123,16 @@ public class Unit {
 				+ ", totalWordCount=" + totalWordCount + ", memoedCount="
 				+ memoedCount + "]";
 	}
+ 
+	public int compareTo(Unit another) {
+		if(this.unitId > another.getUnitId())
+			return 1;
+		else if(this.unitId < another.getUnitId())
+			return -1;
+		else
+			return 0;
+	}
+	 
 
 	
 }
