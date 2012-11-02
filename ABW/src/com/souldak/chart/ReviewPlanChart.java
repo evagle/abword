@@ -66,19 +66,22 @@ public class ReviewPlanChart extends AbstractDemoChart {
 	}
 	
 	public void initValues(){
+		List<WordItem> tmpList = new ArrayList<WordItem>(unit.getMemodWords());
+		tmpList.addAll(unit.getShowedWords());
 		int max = 0;
-		for(WordItem w:unit.getWords()){
+		for(WordItem w:tmpList){
 			int interval=(int)w.getInterval();
 			max = max>interval?max:interval;
 		}
-		maxX = max*3/2;
+		maxX = max<=1? 2:max*3/2;
+		
 		xValues = new ArrayList<Double>();
 		yValues = new ArrayList<Double>();
 		for(int i=0;i<max;i++){
 			xValues.add((double)(i+1));
 			yValues.add(0d);
 		}
-		for(WordItem w:unit.getWords()){
+		for(WordItem w:tmpList){
 			int interval=(int)w.getInterval();
 			if(interval>0)
 				yValues.set(interval-1,yValues.get(interval-1)+1);
@@ -86,7 +89,7 @@ public class ReviewPlanChart extends AbstractDemoChart {
 		for(Double d:yValues){
 			maxY = maxY > d.intValue()?maxY:d.intValue();
 		}
-		maxY = maxY*3/2;
+		maxY = maxY==1?2:maxY*3/2;
 		
 	}
 	

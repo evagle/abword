@@ -1,23 +1,13 @@
 package com.souldak.model;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.google.gson.Gson;
 import com.souldak.config.Configure;
 import com.souldak.db.UnitDBHelper;
-import com.souldak.util.ABFileHelper;
 
 public class Dict {
 	private Context contenxt;
@@ -53,15 +43,19 @@ public class Dict {
 	public void prepareDict() {
 		unitDBHelper = new UnitDBHelper(dictName);
 		unitList = unitDBHelper.getAllUnitOfDict(dictName);
+		unitDBHelper.close();
 		totalUnitCount = unitList.size();
 		for (Unit u : unitList) {
-			if (u.getMemoedCount() == 0) {
-				nonMemoList.add(u);
-			} else if (u.getMemoedCount() == u.getTotalWordCount()) {
+//			if (u.getFinished() == 0) {
+//				nonMemoList.add(u);
+//			} else 
+			if (u.getFinished() == 1) {
 				memoedList.add(u);
 				memoedUnitCount++;
 			} else if (u.getMemoedCount() != 0) {
 				currentUnit = u;
+			}else{
+				nonMemoList.add(u);
 			}
 		}
 		if (currentUnit == null && nonMemoList.size() > 0) {

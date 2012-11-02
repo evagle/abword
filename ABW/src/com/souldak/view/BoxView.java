@@ -79,6 +79,7 @@ public class BoxView extends LinearLayout{
 		
 		imageLock.setBackgroundResource(R.drawable.lock3);
 	 
+			
 		tvWord.setText(unit.getDelegatedWord().getWord());
 		
 		tvUnitNUm.setText(unit.getUnitId()+"");

@@ -10,7 +10,7 @@ public class Configure {
     public static final String APP_DATA_PATH=APP_SD_ROOT_PATH+"data/";
 	public static final String DATABASE_ROOT_PATH=APP_SD_ROOT_PATH+"database/";
 	public static final String DATABASE_DICT_STORAGE=DATABASE_ROOT_PATH+"dictstorage";
-	
+	public static double MAX_MEMO_EFFECT = 0.8;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

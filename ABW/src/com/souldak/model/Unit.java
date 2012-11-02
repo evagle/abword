@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Unit implements Comparable<Unit>{
+import com.souldak.config.Configure;
+import com.souldak.db.WordDBHelper;
+
+public class Unit implements Comparable<Unit> {
 	private int unitId;
 	private String dictName;
 	private int totalWordCount;
 	private int memoedCount;
+	private int ignoreCount;
+	private int finished;
 	private WordItem delegatedWord;
 
 	private List<WordItem> words;
@@ -16,22 +21,109 @@ public class Unit implements Comparable<Unit>{
 	private List<WordItem> nonMemodWords;
 	private List<WordItem> showedWords;
 	private List<WordItem> ingnoredWords;
- 
-	
-	@SuppressWarnings("unchecked")
-	public void initWordsList(){
+	private List<WordItem> finishedWords;
+
+	public Unit() {
 		showedWords = new ArrayList<WordItem>();
 		memodWords = new ArrayList<WordItem>();
 		nonMemodWords = new ArrayList<WordItem>();
 		ingnoredWords = new ArrayList<WordItem>();
-		if(words!=null ){
-			for(WordItem w:words){
-				if(w.getIngnore() == 1){
-					ingnoredWords.add(w);
+		finishedWords = new ArrayList<WordItem>();
+		words = new ArrayList<WordItem>();
+	}
+	public boolean allFinished(){
+		for(WordItem w:words){
+			if(w.getMemoEffect()<Configure.MAX_MEMO_EFFECT){
+				return false;
+			}
+		}
+		finished = 1;
+		return true;
+	}
+	public List<String> wordListToString() {
+		//The last one may not be memorized because of a sudden exit
+		//背诵单词的界面可以在没点的结果的时候推出
+		if(showedWords.size()>0&&showedWords.get(showedWords.size()-1).getMemoList().size()==0){
+			nonMemodWords.add(showedWords.get(showedWords.size()-1));
+			showedWords.remove(showedWords.size()-1);
+		}
+		List<WordItem> memoedTmp = new ArrayList<WordItem>();
+		memoedTmp.addAll(memodWords);
+		memoedTmp.addAll(showedWords);
+		
+		Collections.sort(memoedTmp);
+		List<String> list = new ArrayList<String>();
+		String str = "";
+		String intervals = "";
+		for (WordItem w : memoedTmp) {
+			//已经背诵完成的就不加入了,ignore的也不记录
+			if(w.getMemoEffect()<1 && w.getIngnore()==0){
+				str += w.getWord() + "_";
+				intervals += w.getInterval()+"_";
+			}
+		}
+		if(str.equals("")){
+			list.add(str);
+			list.add(intervals);
+		}else{
+			list.add(str.substring(0,  str.length() - 1 ));
+			list.add(intervals.substring(0, intervals.length() - 1));
+		}
+		str = "";
+		intervals = "";
+		for (WordItem w : nonMemodWords) {
+			str += w.getWord() + "_";
+			intervals += w.getInterval()+"_";
+		}
+		if(str.equals("")){
+			list.add(str);
+			list.add(intervals);
+		}else{
+			list.add(str.substring(0,  str.length() - 1 ));
+			list.add(intervals.substring(0, intervals.length() - 1));
+		}
+		return list;
+	}
+
+	public boolean parseFromString(List<String> list) {
+		if (list == null || list.size() != 4) {
+			return false;
+		}
+		for (int i = 0; i < 4; i+=2) {
+			if (!list.get(i).trim().equals("")) {
+				String[] ws = list.get(i).split("_");
+				String[] intervals =  list.get(i+1).split("_");
+				for(int j=0;j<ws.length;j++){
+					WordItem wordItem = new WordItem();
+					wordItem.setDict(dictName);
+					wordItem.setUnit(unitId);
+					wordItem.setWord(ws[j]);
+					wordItem.setInterval(Double.parseDouble(intervals[j]));
+					if(i==0)
+						memodWords.add(wordItem);
+					else
+						nonMemodWords.add(wordItem);
+					if(!words.contains(wordItem)){
+						words.add(wordItem);
+					}
 				}
-				else if(w.getMemoList().size() > 0){
+			}
+		}
+		Collections.shuffle(nonMemodWords);
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void initWordsList() {
+		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
+		words = wordDBHelper.getTotalUnitWords(unitId);
+		if (words != null) {
+			for (WordItem w : words) {
+				if (w.getIngnore() == 1) {
+					ingnoredWords.add(w);
+				} else if (w.getMemoList().size() > 0) {
 					memodWords.add(w);
-				}else{
+				} else {
 					nonMemodWords.add(w);
 				}
 			}
@@ -39,11 +131,14 @@ public class Unit implements Comparable<Unit>{
 		totalWordCount = words.size();
 		memoedCount = totalWordCount - nonMemodWords.size();
 		Collections.shuffle(nonMemodWords);
-		Collections.sort(memodWords, new WordItem());
+		Collections.sort(memodWords);
+		wordDBHelper.close();
 	}
-	public void addMemodCount(){
+
+	public void addMemodCount() {
 		memoedCount++;
 	}
+
 	public int getUnitId() {
 		return unitId;
 	}
@@ -63,7 +158,7 @@ public class Unit implements Comparable<Unit>{
 	public int getTotalWordCount() {
 		return totalWordCount;
 	}
-	
+
 	public void setTotalWordCount(int totalWordCount) {
 		this.totalWordCount = totalWordCount;
 	}
@@ -104,6 +199,12 @@ public class Unit implements Comparable<Unit>{
 		return nonMemodWords;
 	}
 
+	public int getIgnoreCount() {
+		return ignoreCount;
+	}
+	public void setIgnoreCount(int ignoreCount) {
+		this.ignoreCount = ignoreCount;
+	}
 	public void setNonMemodWords(List<WordItem> nonMemodWords) {
 		this.nonMemodWords = nonMemodWords;
 	}
@@ -116,23 +217,26 @@ public class Unit implements Comparable<Unit>{
 		this.showedWords = showedWords;
 	}
 
-
+	public int getFinished() {
+		return finished;
+	}
+	public void setFinished(int finished) {
+		this.finished = finished;
+	}
 	@Override
 	public String toString() {
 		return "Unit [unitId=" + unitId + ", dictName=" + dictName
 				+ ", totalWordCount=" + totalWordCount + ", memoedCount="
 				+ memoedCount + "]";
 	}
- 
+
 	public int compareTo(Unit another) {
-		if(this.unitId > another.getUnitId())
+		if (this.unitId > another.getUnitId())
 			return 1;
-		else if(this.unitId < another.getUnitId())
+		else if (this.unitId < another.getUnitId())
 			return -1;
 		else
 			return 0;
 	}
-	 
 
-	
 }

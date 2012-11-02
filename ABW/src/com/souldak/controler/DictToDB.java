@@ -96,6 +96,7 @@ public class DictToDB {
 		
 		wordDBHelper = new WordDBHelper(dictName);
 		unitDBHelper = new UnitDBHelper(dictName);
+		 
 		//save to database
 		int count=1;
 		for(WordItem item:list){
@@ -110,6 +111,9 @@ public class DictToDB {
 			unit.setUnitId(unitId);
 			unit.setDictName(dictName);
 			unit.setTotalWordCount(unitWordCount.get(unitId));
+			unit.setDelegatedWord(unitDBHelper.getDelegateWord(unit));
+			unit.setFinished(0);
+			
 			if(!unitDBHelper.hasUnit(unit))
 				unitDBHelper.insert(unit);
 			else

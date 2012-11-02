@@ -11,7 +11,7 @@ import com.souldak.util.TimeHelper;
 
 import android.util.Log;
 
-public class WordItem implements Comparator,Serializable{
+public class WordItem implements Comparable<WordItem>,Serializable{
 	/**
 	 * 
 	 */
@@ -40,6 +40,24 @@ public class WordItem implements Comparator,Serializable{
 		sentences=new ArrayList<String>();
 		memoList=new ArrayList<MemoRecord>();
 		memoEffect=0;
+	}
+	public WordItem(WordItem another){
+		this.id = another.id;
+		this.word = another.word;
+		this.dict = another.dict;
+		this.unit = another.unit;
+		this.phonogram = another.phonogram;//
+		this.sound = another.sound;//
+		this.paraphrases = another.paraphrases;//
+		this.phrases = another.phrases;//
+		this.sentences = another.sentences;//
+		this.memoList = another.memoList;
+		this.repetition= another.repetition;
+		this.EF= another.EF;
+		this.nextMemoDate = another.nextMemoDate;//next date
+		this.interval = another.interval;//time between nextMemoDate and lastMemoDate
+		this.memoEffect = another.memoEffect;//memory effect
+		this.ingnore = another.ingnore;
 	}
 	public void update(WordItem w){
 		if(!(this.word.equals(w.getWord())&&this.dict.equals(w.getDict()))){
@@ -211,16 +229,7 @@ public class WordItem implements Comparator,Serializable{
 		this.interval = interval;
 	}
 
-	public int compare(Object lhs, Object rhs) {
-		WordItem w1=(WordItem)lhs;
-		WordItem w2=(WordItem)rhs;
-		if(w1.interval>w2.interval)
-			return -1;
-		else if(w1.interval<w2.interval)
-			return 1;
-		else
-			return 0;
-	}
+	 
 	public int getUnit() {
 		return unit;
 	}
@@ -234,6 +243,14 @@ public class WordItem implements Comparator,Serializable{
 	public void setIngnore(int ingnore) {
 		this.ingnore = ingnore;
 	}
+	public int compareTo(WordItem another) {
+		if(interval > another.interval)
+			return 1;
+		else if (interval < another.interval)
+			return -1;
+		else
+			return 0;
+	}
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		WordItem w1 = new WordItem();
@@ -246,8 +263,10 @@ public class WordItem implements Comparator,Serializable{
 		list.add(w1);
 		list.add(w2);
 		list.add(w3);
-		Collections.sort(list,new WordItem());
+		Collections.sort(list );
 		
 	}
+ 
+
 	
 }

@@ -71,18 +71,18 @@ public class LoadDictAdapter extends ArrayAdapter<LoadDictAdapterModel> {
 			holder.load.setOnClickListener(new View.OnClickListener(){
 				@SuppressLint("HandlerLeak")
 				public void onClick(View arg0) {
-					String title="ÊÇ·ñÔØÈë´Êµä"+name+"£¿";
+					String title="Import "+name+"?";
 					if(list.get(pos).isLoaded()){
-						title="ÊÇ·ñÖØÐÂÔØÈë´Êµä"+name+"£¿";
+						title="Reload "+name+"?";
 					}
 							
 					new android.app.AlertDialog.Builder(context)//Context
 					.setTitle(title)
-					.setIcon(android.R.drawable.ic_dialog_alert)//Í¼±ê
+					.setIcon(android.R.drawable.ic_dialog_alert)//Í¼ï¿½ï¿½
 					
-					.setPositiveButton("È·¶¨", new DialogInterface.OnClickListener() {//°´Å¥2
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {//ï¿½ï¿½Å¥2
 						public void onClick(DialogInterface arg0, int arg1) {
-							//ÔÚÏß³ÌÖÐÔØÈë´Êµä
+							//ï¿½ï¿½ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½
 							final String path = Configure.APP_DICTS_PATH+holder.dictName.getText();
 							if(!ConstantValue.loadingStats.containsKey(path)||ConstantValue.loadingStats.get(path)==ConstantValue.LOAD_STAT_WAITING){
 								ConstantValue.loadingStats.put(path, ConstantValue.LOAD_STAT_LODING);
@@ -99,13 +99,13 @@ public class LoadDictAdapter extends ArrayAdapter<LoadDictAdapterModel> {
 							dictToDB.addLoadedFile(Configure.APP_DICTS_PATH+holder.dictName.getText(),"1");
 						}
 					})
-					.setNegativeButton("È¡Ïû", new DialogInterface.OnClickListener() {
+					.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 						
 						public void onClick(DialogInterface dialog, int which) {
 							//do nothing
 						}
 					})
-					.show();//ÏÔÊ¾					
+					.show();//ï¿½ï¿½Ê¾					
 					
 				}});
 			

@@ -10,6 +10,7 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
@@ -26,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.souldak.config.Configure;
 import com.souldak.config.ConstantValue.STUDY_STATE;
@@ -37,6 +39,7 @@ import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
 import com.souldak.util.ABFileHelper;
 import com.souldak.util.TimeHelper;
+import com.souldak.view.BoxView;
 import com.souldak.view.ChartDialog;
 
 public class StudyActivity extends Activity implements ActivityInterface {
@@ -52,7 +55,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private int marginPixels;
 	private int buttonHeight;
 	private Typeface dejaVuSans;
-	private Unit unit;
+//	private Unit unit;
 	private StudyControler controler;
 	private STUDY_TYPE studyType;
 	private STUDY_STATE studyState;
@@ -65,23 +68,29 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		setContentView(R.layout.activity_study);
 		String dictName = getIntent().getExtras().getString("dictName");
 		int unitId = getIntent().getExtras().getInt("unitId");
-
-		studyType = STUDY_TYPE.LEARN_NEW;
+		String study_type =  getIntent().getExtras().getString("STUDY_TYPE");
+		if(study_type.equals(STUDY_TYPE.LEARN_NEW.toString())){
+			studyType = STUDY_TYPE.LEARN_NEW;
+		}else{
+			studyType = STUDY_TYPE.REVIEW;
+		}
 		studyState = STUDY_STATE.SHOW_ANSWER;
 
-		UnitDBHelper unitDBHelper = new UnitDBHelper(dictName);
-		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
-		unit = unitDBHelper.getUnit(unitId, dictName);
-		unit.setWords(wordDBHelper.getTotalUnitWords(unitId));
-		unit.initWordsList();
-		unitDBHelper.close();
-		wordDBHelper.close();
+//		UnitDBHelper unitDBHelper = new UnitDBHelper(dictName);
+//		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
+//		unit = unitDBHelper.getUnit(unitId, dictName);
+		//unit.setWords(wordDBHelper.getTotalUnitWords(unitId));
+//		unit.initWordsList();
+//		unitDBHelper.close();
+//		wordDBHelper.close();
 		
-		controler = new StudyControler(unit);
+		controler = new StudyControler(this,dictName,unitId);
+		controler.loadCurrentUnit();
+		
 		effectMap.put("GOOD", 5);
 		effectMap.put("PASS", 3);
 		effectMap.put("BAD", 0);
-		Log.w("StudyActivity", "Unit word num =" + unit.getWords().size());
+		Log.w("StudyActivity", "Unit word num =" + controler.getUnit().getTotalWordCount());
 		findViews();
 		initCompenents();
 		initListeners();
@@ -98,7 +107,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		MenuItem showChart = menu.findItem(R.id.menu_show_chart);
 		showChart.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
-				ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,unit);
+				ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,controler.getUnit());
 				chartDialog.show();
 				return true;
 			}
@@ -108,7 +117,12 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				ActionBar.DISPLAY_HOME_AS_UP);
 		return true;
 	}
-
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		controler.saveCurrentUnitToFile();
+		controler.close();
+	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -252,6 +266,62 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			tvWord.setText(current.getWord());
 			tvPhonogram.setText(current.getPhonogram());
 		} else {
+			if(controler.currentUnitFinished()){
+				new android.app.AlertDialog.Builder(StudyActivity.this)//Context
+				.setTitle("Congratulations！This unit is over.")
+				.setIcon(android.R.drawable.ic_dialog_alert) 
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() { 
+					@SuppressLint("NewApi")
+					public void onClick(DialogInterface arg0, int arg1) {
+						 StudyActivity.this.onDestroy();
+					}
+				})
+				.show();
+			}else{
+				if(controler.getUnit().getMemoedCount()==0&&studyType == STUDY_TYPE.REVIEW){
+					Toast.makeText(this, "没有可复习单词，开始背诵新单词", Toast.LENGTH_SHORT)
+					.show();
+					studyType = STUDY_TYPE.LEARN_NEW;
+					showNextWord();
+				}
+				else if (studyType == STUDY_TYPE.LEARN_NEW) {
+					Toast.makeText(this, "新单词已经背完,进入复习模式", Toast.LENGTH_SHORT)
+							.show();
+					studyType = STUDY_TYPE.REVIEW;
+					showNextWord();
+				} else if (studyType == STUDY_TYPE.REVIEW) {
+					
+					new android.app.AlertDialog.Builder(StudyActivity.this)//Context
+					.setTitle("本轮复习完毕，请选择：")
+					.setIcon(android.R.drawable.ic_dialog_alert) 
+					.setOnCancelListener(new OnCancelListener() {
+						public void onCancel(DialogInterface dialog) {
+							Toast.makeText(StudyActivity.this, "开始下一轮复习", Toast.LENGTH_SHORT).show();
+							studyType = STUDY_TYPE.REVIEW;
+							controler.resetMemodList();
+							showNextWord();
+						}
+					})
+					.setPositiveButton("下一轮复习", new DialogInterface.OnClickListener() { 
+						@SuppressLint("NewApi")
+						public void onClick(DialogInterface arg0, int arg1) {
+							studyType = STUDY_TYPE.REVIEW;
+							controler.resetMemodList();
+							showNextWord();
+						}
+					})
+					.setNegativeButton("学习新单词", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							studyType = STUDY_TYPE.LEARN_NEW;
+							showNextWord();
+						}
+					})
+					.show(); 
+					 
+					
+				}
+			}
+			
 			// ///////
 			// ADD dialog
 			// //////
@@ -276,12 +346,12 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			LayoutParams parms = new LayoutParams(LayoutParams.MATCH_PARENT,
 					dpToPixel(3));
 			bar.setLayoutParams(parms);
-			bar.setProgress(unit.getMemoedCount() * 100
-					/ unit.getTotalWordCount());
+			bar.setProgress(controler.getUnit().getMemoedCount() * 100
+					/ controler.getUnit().getTotalWordCount());
 			bar.setOnClickListener(new View.OnClickListener() {
 				
 				public void onClick(View v) {
-					ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,unit);
+					ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,controler.getUnit());
 					chartDialog.show();
 				}
 			});

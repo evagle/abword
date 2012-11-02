@@ -18,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.souldak.config.Configure;
+
 import android.os.Environment;
 import android.util.Log;
 
@@ -43,6 +45,7 @@ public class ABFileHelper {
 						"Load File Failed! FileNotFoundException filepath="
 								+ filePath + " error message:"
 								+ e3.getMessage());
+				return null;
 			}
 			try {
 				in.mark(4);
@@ -160,6 +163,10 @@ public class ABFileHelper {
 	}
     public static List<String> readLines(String fileName){
     	 BufferedReader reader = ABFileHelper.open(fileName);
+    	 if(reader == null){
+    		 Log.e("ABFileHelper", "open file failed");
+    		 return null;
+    	 }
     	 List<String> lines =new ArrayList<String>();
     	 String line;
     	 try {

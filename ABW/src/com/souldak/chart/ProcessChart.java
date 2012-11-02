@@ -26,14 +26,17 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.souldak.abw.R;
+import com.souldak.config.Configure;
 import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
 
 public class ProcessChart extends AbstractDemoChart {
 	private Unit unit;
-	private int nonMemoCount;
-	private int memorizingCount;
-	private int memoedCount;
+	private int nonMemoCount = 0;
+	private int memorizingCount = 0;
+	//private int memoedCount;
+	private int finishedCount = 0;
+	private int ignoreCount = 0;
 
 	/**
 	 * Returns the chart name.
@@ -50,15 +53,32 @@ public class ProcessChart extends AbstractDemoChart {
 	}
 
 	private void initValues() {
-		for (WordItem w : unit.getWords()) {
-			if (w.getIngnore() == 1 || w.getMemoEffect() >= 1) {
-				memoedCount++;
-			} else if (w.getMemoList().size() == 0) {
-				nonMemoCount++;
-			} else {
+		ignoreCount  = unit.getIgnoreCount();
+		for(WordItem w : unit.getMemodWords())
+			if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT){
 				memorizingCount++;
+			}else if(w.getInterval()==0 ){
+				nonMemoCount++ ;
 			}
-		}
+		for(WordItem w : unit.getShowedWords())
+			if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT){
+				memorizingCount++ ;
+			}else if(w.getInterval()==0 ){
+				nonMemoCount++ ;
+			}
+		nonMemoCount += unit.getNonMemodWords().size();
+		finishedCount = unit.getTotalWordCount() - ignoreCount - memorizingCount -nonMemoCount;
+		
+		
+//		for (WordItem w : unit.getWords()) {
+//			if (w.getIngnore() == 1 || w.getMemoEffect() >= 1) {
+//				memoedCount++;
+//			} else if (w.getMemoList().size() == 0) {
+//				nonMemoCount++;
+//			} else {
+//				memorizingCount++;
+//			}
+//		}
 	}
 
 	/**
@@ -81,20 +101,23 @@ public class ProcessChart extends AbstractDemoChart {
 		List<Double> values = new ArrayList<Double>();
 		values.add((double)nonMemoCount);
 		values.add((double)memorizingCount);
-		values.add((double)memoedCount);
+		values.add((double)finishedCount);
+		values.add((double)ignoreCount);
 		List<Integer> colors = new ArrayList<Integer>();
 		colors.add(context.getResources().getColor(R.color.android_blue));
 		colors.add(context.getResources().getColor(R.color.android_yellow));
 		colors.add(context.getResources().getColor(R.color.android_green));
+		colors.add(Color.GRAY);
 		for(int i=values.size()-1;i>=0;i--){
 			if(values.get(i)==0){
 				colors.remove(i);
 			}
 		}
 		List<String> categories = new ArrayList<String>();
-		categories.add(" New  ");
-		categories.add(" Memorizing  ");
-		categories.add(" Finished  ");
+		categories.add(" New ("+nonMemoCount+")");
+		categories.add(" Memorizing ("+memorizingCount+")");
+		categories.add(" Finished ("+finishedCount+")");
+		categories.add(" Ignored ("+ignoreCount+")");
 		
 		DefaultRenderer renderer = buildCategoryRenderer(colors);
 		renderer.setChartTitle("Unit "+unit.getUnitId()+" 背诵进度");

@@ -22,6 +22,8 @@ public class UnitDBHelper {
 	private static final String TOTAL_WORD_COUNT = "total_word_count";
 	private static final String MEMOED_WORD_COUNT = "memoed_word_count";
 	private static final String DELEGATE_WORD = "delegated_word";
+	private static final String IGNORED_WORD_COUNT = "ignored_word_count";
+	private static final String FINISHED = "finished";
 	private static String createSqlStr;
 	
 
@@ -32,7 +34,8 @@ public class UnitDBHelper {
 				+ this.tableName
 				+ " (unit_id integer not null, dict text not null," +
 				TOTAL_WORD_COUNT+" integer not null, "+MEMOED_WORD_COUNT+" integer not null,"
-				+ DELEGATE_WORD+" text);";
+				+ DELEGATE_WORD+" text, "+FINISHED+" integer not null,"+
+				IGNORED_WORD_COUNT+" integer not null);";
 		baseDBHelper = new BaseDBHelper(this.tableName,createSqlStr);
 	}
 	public void close(){
@@ -44,7 +47,11 @@ public class UnitDBHelper {
 		values.put(DICT, unit.getDictName());
 		values.put(TOTAL_WORD_COUNT, unit.getTotalWordCount());
 		values.put(MEMOED_WORD_COUNT, unit.getMemoedCount());
-		values.put(DELEGATE_WORD, unit.getDelegatedWord().getWord());
+		values.put(IGNORED_WORD_COUNT, unit.getIgnoreCount());
+		
+		if( unit.getDelegatedWord() != null )
+			values.put(DELEGATE_WORD, unit.getDelegatedWord().getWord());
+		values.put(FINISHED,unit.getFinished());
 		return values;
 	}
 	public boolean insert(Unit unit) {
@@ -85,10 +92,16 @@ public class UnitDBHelper {
 			int totalWordCountIndex = cursor.getColumnIndex(TOTAL_WORD_COUNT);
 			int memoedWordCountIndex = cursor.getColumnIndex(MEMOED_WORD_COUNT);
 			int delegateWordIndex = cursor.getColumnIndex(DELEGATE_WORD);
-			unit.setUnitId(cursor.getInt(unitIdIndex)) ;
+			int finishedIndex = cursor.getColumnIndex(FINISHED);
+			int ignoreIndex = cursor.getColumnIndex(IGNORED_WORD_COUNT);
+			
+			unit.setUnitId(cursor.getInt(unitIdIndex));
 			unit.setDictName(cursor.getString(dictIndex));
 			unit.setTotalWordCount(cursor.getInt(totalWordCountIndex));
 			unit.setMemoedCount(cursor.getInt(memoedWordCountIndex));
+			unit.setFinished(cursor.getInt(finishedIndex));
+			unit.setIgnoreCount(cursor.getInt(ignoreIndex));
+			
 			WordItem delegateWord = new WordItem();
 			delegateWord.setWord(cursor.getString(delegateWordIndex));
 			unit.setDelegatedWord(delegateWord);
@@ -142,12 +155,13 @@ public class UnitDBHelper {
 				+ " units.");
 		return unitList;
 	}
-	public void getDelegateWord(Unit unit){
+	public WordItem getDelegateWord(Unit unit){
 		Log.d("UnitDBHelper", "get delegate word of unit "+unit.getUnitId());
 		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
 		WordItem delegate=wordDBHelper.getRandomWordOfUnit(unit.getUnitId());
 		unit.setDelegatedWord(delegate);
 		wordDBHelper.close();
+		return delegate;
 	}
 	 
 	public boolean update(Unit unit){

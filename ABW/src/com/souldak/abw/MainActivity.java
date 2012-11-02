@@ -1,6 +1,7 @@
 package com.souldak.abw;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.animation.ObjectAnimator;
@@ -9,6 +10,7 @@ import android.annotation.TargetApi;
 import android.app.ActionBar;
 import android.app.ActionBar.OnNavigationListener;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -17,12 +19,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
+import com.souldak.config.ConstantValue.STUDY_TYPE;
 import com.souldak.controler.DictManager;
 import com.souldak.db.WordDBHelper;
-import com.souldak.fragment.WordFragment;
 import com.souldak.model.Dict;
 import com.souldak.model.Unit;
 import com.souldak.util.SharePreferenceHelper;
+import com.souldak.util.TimeHelper;
 import com.souldak.view.ABScrollView;
 import com.souldak.view.BoxView;
 import com.souldak.view.BoxView.BOX_TYPE;
@@ -100,15 +103,15 @@ public class MainActivity extends Activity implements ActivityInterface{
 			public boolean onNavigationItemSelected(int position, long itemId) {
 				String unitIdStr = ((String)SharePreferenceHelper.getPreferences(dictNameList.get(position),
 						MainActivity.this));
-				if(unitIdStr == null){
+				//if(unitIdStr == null){
 					selectedDict = new Dict(MainActivity.this,
 							dictNameList.get(position));
 					SharePreferenceHelper.savePreferences(dictNameList.get(position), 
 							selectedDict.getCurrentUnit().getUnitId()+"", MainActivity.this);
-				}else{
-					int unitid = Integer.parseInt(unitIdStr);
-					
-				}
+				//}else{
+				//	int unitid = Integer.parseInt(unitIdStr);
+				//	
+				//}
 				
 				LinearLayout containerlayout = (LinearLayout) MainActivity.this
 						.findViewById(R.id.fragment_container);
@@ -171,24 +174,35 @@ public class MainActivity extends Activity implements ActivityInterface{
 					} else if (box.getType().equals(BOX_TYPE.BOX_CURR)) {
 						box.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
-
-								BoxView box = (BoxView) v;
+								final BoxView box = (BoxView)v;
 								box.randomWord(wordDBHelper);
-								ObjectAnimator alpha = ObjectAnimator.ofFloat(
-										box, "alpha", 1f, 0f);
-								alpha.setRepeatMode(ObjectAnimator.REVERSE);
-								alpha.setRepeatCount(1);
-								alpha.setDuration(800);
-								alpha.start();
-								Intent intent = new Intent(MainActivity.this,
-										StudyActivity.class);
-								Bundle bundle = new Bundle();
-								bundle.putString("dictName", box.getUnit()
-										.getDictName());
-								bundle.putInt("unitId", box.getUnit()
-										.getUnitId());
-								intent.putExtras(bundle);
-								startActivity(intent);
+//								ObjectAnimator alpha = ObjectAnimator.ofFloat(
+//										box, "alpha", 1f, 0f);
+//								alpha.setRepeatMode(ObjectAnimator.REVERSE);
+//								alpha.setRepeatCount(1);
+//								alpha.setDuration(800);
+//								alpha.start();
+								
+								new android.app.AlertDialog.Builder(MainActivity.this)//Context
+								.setTitle("模式选择")
+								.setIcon(android.R.drawable.ic_dialog_alert) 
+								.setPositiveButton("新单词背诵", new DialogInterface.OnClickListener() { 
+									@SuppressLint("NewApi")
+									public void onClick(DialogInterface arg0, int arg1) {
+										startStudyActivity(STUDY_TYPE.LEARN_NEW,(BoxView)box);
+									}
+								})
+								.setNegativeButton("复习旧单词", new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog, int which) {
+										startStudyActivity(STUDY_TYPE.REVIEW,(BoxView)box);
+									}
+								})
+								.show(); 
+								
+								
+								 
+								
+								
 								//
 							}
 						});
@@ -198,7 +212,9 @@ public class MainActivity extends Activity implements ActivityInterface{
 				return false;
 			}
 		};
-
+		
+		
+		
 		dictNameList = dictManager.getDictList();
 		actionAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_dropdown_item, dictNameList);
@@ -206,7 +222,19 @@ public class MainActivity extends Activity implements ActivityInterface{
 				mOnNavigationListener);
 
 	}
-	
+	private void startStudyActivity(STUDY_TYPE studyType, BoxView box){
+		Intent intent = new Intent(MainActivity.this,
+				StudyActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("dictName", box.getUnit()
+				.getDictName());
+		bundle.putInt("unitId", box.getUnit()
+				.getUnitId());
+		bundle.putString("STUDY_TYPE", studyType.toString());
+		intent.putExtras(bundle);
+		startActivity(intent);
+		
+	}
 	private BoxView generateBox(Unit iunit, int color, BOX_TYPE type, int num) {
 		int margin = 48;
 		int marginHalf = 24;
