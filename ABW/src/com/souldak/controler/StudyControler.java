@@ -111,7 +111,8 @@ public class StudyControler {
 		WordDBHelper wordDBHelper = new WordDBHelper(unit.getDictName());
 		if(w.getIngnore()==1){
 			unit.setIgnoreCount(unit.getIgnoreCount()+1);
-		}else if(w.getMemoList().size()==1){
+			unit.removeIgnoredWord(w);
+		}else if(w.getMemoList().size()==0){
 			unit.addMemodCount();
 		}
 		w.addMemoRecord(startTime, timeDelta, grade);

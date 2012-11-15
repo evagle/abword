@@ -55,20 +55,26 @@ public class ProcessChart extends AbstractDemoChart {
 	private void initValues() {
 		ignoreCount  = unit.getIgnoreCount();
 		for(WordItem w : unit.getMemodWords())
-			if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT){
+			if(w.getIngnore()==1){
+				int ti=0;
+			}
+			else if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT ){
 				memorizingCount++;
 			}else if(w.getInterval()==0 ){
 				nonMemoCount++ ;
 			}
 		for(WordItem w : unit.getShowedWords())
-			if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT){
+			if(w.getIngnore()==1){
+				int ti=0;
+			}
+			else if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT){
 				memorizingCount++ ;
 			}else if(w.getInterval()==0 ){
 				nonMemoCount++ ;
 			}
 		nonMemoCount += unit.getNonMemodWords().size();
 		finishedCount = unit.getTotalWordCount() - ignoreCount - memorizingCount -nonMemoCount;
-		
+
 		
 //		for (WordItem w : unit.getWords()) {
 //			if (w.getIngnore() == 1 || w.getMemoEffect() >= 1) {

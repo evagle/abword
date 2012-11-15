@@ -42,7 +42,7 @@ public class Unit implements Comparable<Unit> {
 	}
 	public List<String> wordListToString() {
 		//The last one may not be memorized because of a sudden exit
-		//背诵单词的界面可以在没点的结果的时候推出
+		//背诵单词的界面可以在没点的结果的时候退出
 		if(showedWords.size()>0&&showedWords.get(showedWords.size()-1).getMemoList().size()==0){
 			nonMemodWords.add(showedWords.get(showedWords.size()-1));
 			showedWords.remove(showedWords.size()-1);
@@ -134,7 +134,21 @@ public class Unit implements Comparable<Unit> {
 		Collections.sort(memodWords);
 		wordDBHelper.close();
 	}
-
+	public void removeIgnoredWord(WordItem item){
+		removeWordFromList(showedWords,item);
+		removeWordFromList(memodWords,item);
+		removeWordFromList(nonMemodWords,item);
+		removeWordFromList(finishedWords,item);
+		removeWordFromList(words,item);
+		ingnoredWords.add(item);
+	}
+	public void removeWordFromList(List<WordItem> list,WordItem word){
+		for(int i=list.size()-1;i>=0;i--){
+			if(list.get(i).getWord().equals(word.getWord())){
+				list.remove(i);
+			}
+		}
+	}
 	public void addMemodCount() {
 		memoedCount++;
 	}

@@ -37,6 +37,7 @@ import com.souldak.db.UnitDBHelper;
 import com.souldak.db.WordDBHelper;
 import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
+import com.souldak.tts.TTS;
 import com.souldak.util.ABFileHelper;
 import com.souldak.util.TimeHelper;
 import com.souldak.view.BoxView;
@@ -61,6 +62,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private STUDY_STATE studyState;
 	private WordItem current;
 	private Date startDate;
+	private TTS tts;
 	private HashMap<String, Integer> effectMap = new HashMap<String, Integer>();
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +77,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			studyType = STUDY_TYPE.REVIEW;
 		}
 		studyState = STUDY_STATE.SHOW_ANSWER;
-
+		tts = new TTS(this);
 //		UnitDBHelper unitDBHelper = new UnitDBHelper(dictName);
 //		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
 //		unit = unitDBHelper.getUnit(unitId, dictName);
@@ -122,6 +124,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		super.onDestroy();
 		controler.saveCurrentUnitToFile();
 		controler.close();
+		tts.close();
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -175,16 +178,16 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 		tvWord.setTypeface(dejaVuSans);
 
-		BufferedReader br = ABFileHelper.open(Configure.APP_SD_ROOT_PATH
-				+ "gre_phonogram1.txt");
-		String[] xx = null;
-		try {
-			xx = br.readLine().trim().split("[ \t]");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		tvPhonogram.setText(xx[1]);
+//		BufferedReader br = ABFileHelper.open(Configure.APP_SD_ROOT_PATH
+//				+ "gre_phonogram1.txt");
+//		String[] xx = null;
+//		try {
+//			xx = br.readLine().trim().split("[ \t]");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		tvPhonogram.setText(xx[1]);
 		tvPhonogram.setTypeface(dejaVuSans);
 		showNextWord();
 		
@@ -246,7 +249,11 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				.show(); 
 			}
 		});
-		
+		tvPhonogram.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				tts.speak(current.getWord());
+			}
+		});
 	}
 	public void onStateChange() {
 		if (studyState.equals(STUDY_STATE.LEARNING)) {
@@ -450,5 +457,5 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		});
 		return button;
 	}
-
+	 
 }
