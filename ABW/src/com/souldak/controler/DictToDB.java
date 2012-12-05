@@ -52,6 +52,7 @@ public class DictToDB {
 		Log.d("DictLoader", "start to LoadDictFromFile . file:"
 				+ filePath );
 		BufferedReader reader = ABFileHelper.open(filePath);
+		
 		if (reader == null) {
 			Log.e("DictLoader", "LoadDictFromFile failed. Open file:"
 					+ filePath + " failed.");

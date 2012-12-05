@@ -39,6 +39,7 @@ public class StudyControler {
 	}
 	public void loadCurrentUnit(){
 		List<String> list = ABFileHelper.readLines(Configure.APP_DATA_PATH+CURRENT_UNIT_WORDS+dictName);
+		unit.init();
 		if(list==null || !unit.parseFromString(list))
 			unit.initWordsList();
 	}

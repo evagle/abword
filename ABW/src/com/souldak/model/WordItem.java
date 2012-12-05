@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import com.souldak.util.TimeHelper;
@@ -23,9 +24,9 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	private int unit;
 	private String phonogram;//
 	private String sound;//
-	private List<String> paraphrases;//
+	private List<HashMap<String,String>> paraphrases;//
 	private List<String> phrases;//
-	private List<String> sentences;//
+	private List<HashMap<String,String>> sents;//
 	private List<MemoRecord> memoList;
 	private int repetition=0;//�������memoList�Ĵ�С
 	private double EF=2.5;//EF easy factor
@@ -35,9 +36,9 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	private int ingnore;
 	
 	public WordItem(){
-		paraphrases=new ArrayList<String>();
+		paraphrases=new ArrayList<HashMap<String,String>>();
 		phrases=new ArrayList<String>();
-		sentences=new ArrayList<String>();
+		sents=new ArrayList<HashMap<String,String>>();
 		memoList=new ArrayList<MemoRecord>();
 		memoEffect=0;
 	}
@@ -50,7 +51,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		this.sound = another.sound;//
 		this.paraphrases = another.paraphrases;//
 		this.phrases = another.phrases;//
-		this.sentences = another.sentences;//
+		this.sents = another.sents;//
 		this.memoList = another.memoList;
 		this.repetition= another.repetition;
 		this.EF= another.EF;
@@ -68,21 +69,24 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 			this.phonogram = w.phonogram;
 		if(w.sound!=null&&!w.sound.equals(""))
 			this.sound = w.sound;
-		for(String str:w.paraphrases){
-			if(!this.paraphrases.contains(str)){
-				this.paraphrases.add(str);
-			}
-		}
+		this.paraphrases = w.paraphrases;
+//		for(HashMap<String,String> str:w.paraphrases){
+//			if(!this.paraphrases.contains(str)){
+//				this.paraphrases.add(str);
+//			}
+//		}
+		
 		for(String str:w.phrases){
 			if(!this.phrases.contains(str)){
 				this.phrases.add(str);
 			}
 		}
-		for(String str:w.sentences){
-			if(!this.sentences.contains(str)){
-				this.sentences.add(str);
-			}
-		}
+		this.sents = w.sents;
+//		for(HashMap<String,String> str:w.sents){
+//			if(!this.sents.contains(str)){
+//				this.sents.add(str);
+//			}
+//		}
 		
 	}
 	public void addMemoRecord(Date startTime,Double timeDelta,int grade){
@@ -116,7 +120,14 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		
 	}
 	
-	
+	public List<String> paraphrasesList(){
+		List<String> list = new ArrayList<String>();
+		for(HashMap<String, String> para : paraphrases){
+			list.add(para.get("pos"));
+			list.add(para.get("acc"));
+		}
+		return list;
+	}
 	
 	
 	
@@ -125,7 +136,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		return "WordItem [id=" + id + ", word=" + word + ", dict=" + dict
 				+ ", unit=" + unit + ", phonogram=" + phonogram + ", sound="
 				+ sound + ", paraphrases=" + paraphrases + ", phrases="
-				+ phrases + ", sentences=" + sentences + ", memoList="
+				+ phrases + ", sentences=" + sents + ", memoList="
 				+ memoList + ", repetition=" + repetition + ", EF=" + EF
 				+ ", nextMemoDate=" + nextMemoDate + ", interval=" + interval
 				+ ", memoEffect=" + memoEffect + ", ingnore=" + ingnore + "]";
@@ -167,12 +178,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	public void setSound(String sound) {
 		this.sound = sound;
 	}
-	public List<String> getParaphrases() {
-		return paraphrases;
-	}
-	public void setParaphrases(List<String> paraphrases) {
-		this.paraphrases = paraphrases;
-	}
+	 
 	public List<String> getPhrases() {
 		return phrases;
 	}
@@ -180,15 +186,6 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		this.phrases = phrases;
 	}
 	 
-
-	public List<String> getSentences() {
-		return sentences;
-	}
-
-	public void setSentences(List<String> sentences) {
-		this.sentences = sentences;
-	}
-
 	public String getDict() {
 		return dict;
 	}
@@ -242,6 +239,19 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	}
 	public void setIngnore(int ingnore) {
 		this.ingnore = ingnore;
+	}
+	public List<HashMap<String, String>> getParaphrases() {
+		return paraphrases;
+	}
+	public void setParaphrases(List<HashMap<String, String>> paraphrases) {
+		this.paraphrases = paraphrases;
+	}
+	 
+	public List<HashMap<String, String>> getSents() {
+		return sents;
+	}
+	public void setSents(List<HashMap<String, String>> sents) {
+		this.sents = sents;
 	}
 	public int compareTo(WordItem another) {
 		if(interval > another.interval)

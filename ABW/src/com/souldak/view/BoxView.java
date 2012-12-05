@@ -85,15 +85,15 @@ public class BoxView extends LinearLayout{
 		tvUnitNUm.setText(unit.getUnitId()+"");
 		Log.d("UNIT_NUM ","UNIT_NUM "+unit.getUnitId());
     	//tvPhonogram.setText(unit.getDelegatedWord().getPhonogram());
-		BufferedReader br = ABFileHelper.open(Configure.APP_SD_ROOT_PATH+"gre_phonogram1.txt");
-		String[] xx=null;
-		try {
-			xx=br.readLine().trim().split("[ \t]");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		tvPhonogram.setText(xx[1]);
+//		BufferedReader br = ABFileHelper.open(Configure.APP_SD_ROOT_PATH+"gre_phonogram1.txt");
+//		String[] xx=null;
+//		try {
+//			xx=br.readLine().trim().split("[ \t]");
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		tvPhonogram.setText(unit.getDelegatedWord().getPhonogram());
     	
     	GradientDrawable background = (GradientDrawable) getResources()
 				.getDrawable(R.drawable.rounded_rect);

@@ -24,6 +24,9 @@ public class Unit implements Comparable<Unit> {
 	private List<WordItem> finishedWords;
 
 	public Unit() {
+		init();
+	}
+	public void init(){
 		showedWords = new ArrayList<WordItem>();
 		memodWords = new ArrayList<WordItem>();
 		nonMemodWords = new ArrayList<WordItem>();

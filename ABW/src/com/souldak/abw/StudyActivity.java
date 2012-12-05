@@ -127,6 +127,16 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		tts.close();
 	}
 	@Override
+	public void onPause(){
+		super.onPause();
+		controler.saveCurrentUnitToFile();
+	}
+	@Override
+	public void onResume(){
+		super.onResume();
+		controler.loadCurrentUnit();
+	}
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
@@ -407,7 +417,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	@SuppressLint("NewApi")
 	public void showPhrasesViews() {
 		phrasesBlock.removeAllViews();
-		for (String phrase : current.getParaphrases()) {
+		for (String phrase : current.paraphrasesList()) {
 			TextView view = new TextView(StudyActivity.this);
 			view.setText(phrase);
 			view.setTypeface(dejaVuSans);
