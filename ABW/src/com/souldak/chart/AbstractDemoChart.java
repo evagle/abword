@@ -165,7 +165,22 @@ public abstract class AbstractDemoChart implements IDemoChart {
     }
     return dataset;
   }
-
+  protected XYMultipleSeriesDataset buildDateDataset(List<String> titles, List<List<Date>> xValues,
+	      List<List<Double>> yValues) { 
+	    XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
+	    int length = titles.size();
+	    for (int i = 0; i < length; i++) {
+	      TimeSeries series = new TimeSeries(titles.get(i));
+	      List<Date> xV = xValues.get(i);
+	      List<Double> yV = yValues.get(i);
+	      int seriesLength = xV.size();
+	      for (int k = 0; k < seriesLength; k++) {
+	        series.add(xV.get(k), yV.get(k));
+	      }
+	      dataset.addSeries(series);
+	    }
+	    return dataset;
+	  }
   /**
    * Builds a category series using the provided values.
    * 

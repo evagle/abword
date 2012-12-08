@@ -39,6 +39,7 @@ import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
 import com.souldak.tts.TTS;
 import com.souldak.util.ABFileHelper;
+import com.souldak.util.SharePreferenceHelper;
 import com.souldak.util.TimeHelper;
 import com.souldak.view.BoxView;
 import com.souldak.view.ChartDialog;
@@ -63,8 +64,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private WordItem current;
 	private Date startDate;
 	private TTS tts;
-	private HashMap<String, Integer> effectMap = new HashMap<String, Integer>();
-
+	public static String STUDY_LAST_DICT= "study_last_dict";
+	public static String STUDY_LAST_UNIT = "study_last_unit";
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_study);
@@ -78,20 +79,22 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		}
 		studyState = STUDY_STATE.SHOW_ANSWER;
 		tts = new TTS(this);
-//		UnitDBHelper unitDBHelper = new UnitDBHelper(dictName);
-//		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
-//		unit = unitDBHelper.getUnit(unitId, dictName);
-		//unit.setWords(wordDBHelper.getTotalUnitWords(unitId));
-//		unit.initWordsList();
-//		unitDBHelper.close();
-//		wordDBHelper.close();
 		
 		controler = new StudyControler(this,dictName,unitId);
-		controler.loadCurrentUnit();
+		Object lastDict = SharePreferenceHelper.getPreferences(STUDY_LAST_DICT, this);
+		Object lastUnit = SharePreferenceHelper.getPreferences(STUDY_LAST_UNIT, this);
+		if(lastDict != null && lastUnit!=null &&
+				dictName.equals((String)lastDict) && (unitId+"").equals(lastUnit)){
+			 
+				controler.loadCurrentUnit(true);
+			 
+		}else{
+			controler.loadCurrentUnit(false);
+		}
 		
-		effectMap.put("GOOD", 5);
-		effectMap.put("PASS", 3);
-		effectMap.put("BAD", 0);
+		
+		
+	
 		Log.w("StudyActivity", "Unit word num =" + controler.getUnit().getTotalWordCount());
 		findViews();
 		initCompenents();
@@ -123,6 +126,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	public void onDestroy(){
 		super.onDestroy();
 		controler.saveCurrentUnitToFile();
+		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler.getUnit().getDictName(), this);
+		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler.getUnit().getUnitId()+"", this);
 		controler.close();
 		tts.close();
 	}
@@ -130,11 +135,13 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	public void onPause(){
 		super.onPause();
 		controler.saveCurrentUnitToFile();
+		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler.getUnit().getDictName(), this);
+		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler.getUnit().getUnitId()+"", this);
 	}
 	@Override
 	public void onResume(){
 		super.onResume();
-		controler.loadCurrentUnit();
+		controler.loadCurrentUnit(true);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -161,6 +168,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 	}
 
+	@SuppressLint("NewApi")
 	public void initCompenents() {
 		screenWidth = getResources().getDisplayMetrics().widthPixels;
 		screenHeight = getResources().getDisplayMetrics().heightPixels;
@@ -177,7 +185,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				R.color.android_light_yellow));
 		background.setAlpha(225);
 		background.setCornerRadius(4);
-		contentBlock.setBackgroundDrawable(background);
+		contentBlock.setBackground(background);
 		LayoutParams params = new LayoutParams(screenWidth - marginPixels,
 				screenHeight - buttonHeight * 3 / 2 - marginPixels * 2);
 		params.setMargins(marginPixels / 2, marginPixels / 2, marginPixels / 2,
@@ -188,16 +196,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 		tvWord.setTypeface(dejaVuSans);
 
-//		BufferedReader br = ABFileHelper.open(Configure.APP_SD_ROOT_PATH
-//				+ "gre_phonogram1.txt");
-//		String[] xx = null;
-//		try {
-//			xx = br.readLine().trim().split("[ \t]");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		tvPhonogram.setText(xx[1]);
 		tvPhonogram.setTypeface(dejaVuSans);
 		showNextWord();
 		
@@ -241,7 +239,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 					public void onClick(DialogInterface arg0, int arg1) {
 						current.setIngnore(1);
 						double timeDelta = TimeHelper.getDiffSec(new Date(), startDate);
-						controler.finishMemoWord(current, startDate, timeDelta,5);
+						controler.finishMemoWord(current, startDate, timeDelta,"");
 						ObjectAnimator.ofFloat(contentBlock, "rotationY", 0, 180).setDuration(400)
 								.start();
 						ObjectAnimator.ofFloat(contentBlock, "rotationY", 180, 360)
@@ -361,7 +359,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			ProgressBar bar = new ProgressBar(this, null,
 					android.R.attr.progressBarStyleHorizontal);
 			LayoutParams parms = new LayoutParams(LayoutParams.MATCH_PARENT,
-					dpToPixel(3));
+					dpToPixel(5));
 			bar.setLayoutParams(parms);
 			bar.setProgress(controler.getUnit().getMemoedCount() * 100
 					/ controler.getUnit().getTotalWordCount());
@@ -455,7 +453,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				Button button = (Button) v;
 				double timeDelta = TimeHelper.getDiffSec(new Date(), startDate);
 				controler.finishMemoWord(current, startDate, timeDelta,
-						effectMap.get(button.getText()));
+						button.getText().toString());
 				ObjectAnimator.ofFloat(contentBlock, "rotationY", 0, 180).setDuration(400)
 						.start();
 				ObjectAnimator.ofFloat(contentBlock, "rotationY", 180, 360)

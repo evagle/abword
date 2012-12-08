@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.souldak.config.Configure;
 import com.souldak.db.UnitDBHelper;
@@ -30,40 +31,48 @@ public class Dict {
 		uri = Configure.APP_DATA_PATH + dictName + "_unit_info.txt";
 		prepareDict();
 	}
-	public Dict(Context contenxt, String dictName, int currentUnitId){
+
+	public Dict(Context contenxt, String dictName, int currentUnitId) {
 		this.contenxt = contenxt;
 		this.dictName = dictName;
 		memoedList = new ArrayList<Unit>();
 		nonMemoList = new ArrayList<Unit>();
 		prepareDict(currentUnitId);
 	}
-	public void prepareDict(int currentUnitId){
+
+	public void prepareDict(int currentUnitId) {
 	}
+
 	@SuppressWarnings("unchecked")
 	public void prepareDict() {
-		unitDBHelper = new UnitDBHelper(dictName);
-		unitList = unitDBHelper.getAllUnitOfDict(dictName);
-		unitDBHelper.close();
-		totalUnitCount = unitList.size();
-		for (Unit u : unitList) {
-//			if (u.getFinished() == 0) {
-//				nonMemoList.add(u);
-//			} else 
-			if (u.getFinished() == 1) {
-				memoedList.add(u);
-				memoedUnitCount++;
-			} else if (u.getMemoedCount() != 0) {
-				currentUnit = u;
-			}else{
-				nonMemoList.add(u);
+		try {
+			unitDBHelper = new UnitDBHelper(dictName);
+			unitList = unitDBHelper.getAllUnitOfDict(dictName);
+			unitDBHelper.close();
+			totalUnitCount = unitList.size();
+			for (Unit u : unitList) {
+				// if (u.getFinished() == 0) {
+				// nonMemoList.add(u);
+				// } else
+				if (u.getFinished() == 1) {
+					memoedList.add(u);
+					memoedUnitCount++;
+				} else if (u.getMemoedCount() != 0) {
+					currentUnit = u;
+				} else {
+					nonMemoList.add(u);
+				}
 			}
+			if (currentUnit == null && nonMemoList.size() > 0) {
+				currentUnit = nonMemoList.get(0);
+				nonMemoList.remove(0);
+			}
+			// shuffleList(newWords);
+			Collections.sort(nonMemoList);
+		} catch (Exception e) {
+			currentUnit = null;
+			Log.e("prepareDict", "Prepare dict failed" );
 		}
-		if (currentUnit == null && nonMemoList.size() > 0) {
-			currentUnit = nonMemoList.get(0);
-			nonMemoList.remove(0);
-		}
-		// shuffleList(newWords);
-		Collections.sort(nonMemoList);
 	}
 
 	public Unit getCurrentUnit() {

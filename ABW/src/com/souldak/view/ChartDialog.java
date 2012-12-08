@@ -12,6 +12,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import com.souldak.abw.ActivityInterface;
 import com.souldak.abw.R;
+import com.souldak.chart.ClickStatsChart;
 import com.souldak.chart.ProcessChart;
 import com.souldak.chart.ReviewPlanChart;
 import com.souldak.model.Unit;
@@ -27,7 +28,25 @@ public class ChartDialog extends Dialog implements ActivityInterface {
 	private int screenHeight;
 	private Unit unit;
 
-	public ChartDialog(Context context, int theme,Unit unit) {
+	public ChartDialog(Context context, int theme) {
+		super(context, theme);
+		this.context = context;
+		setContentView(R.layout.chart_dialog);
+		screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+		screenHeight = context.getResources().getDisplayMetrics().heightPixels;
+
+		initCompenents();
+		
+		adjustLayout();
+		ClickStatsChart chart = new ClickStatsChart();
+		View view = chart.execute(context);
+		LayoutParams params = new LayoutParams(
+				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+		view.setLayoutParams(params);
+		chartContainer.addView(view);
+	}
+
+	public ChartDialog(Context context, int theme, Unit unit) {
 		super(context, theme);
 		this.context = context;
 		this.unit = unit;
@@ -41,23 +60,25 @@ public class ChartDialog extends Dialog implements ActivityInterface {
 		initListeners();
 
 	}
+
 	public void initCompenents() {
 		showReviewPlanBtn = (Button) findViewById(R.id.chart_dialog_show_review_plan);
 		showProcessBtn = (Button) findViewById(R.id.chart_dialog_show_process);
 		// closeDialog = (Button) findViewById(R.id.chart_dialog_close);
 		chartContainer = (LinearLayout) findViewById(R.id.chart_dialog_chart);
 		mainLayout = (LinearLayout) findViewById(R.id.chart_dialog_main);
-
-		LayoutParams params = new LayoutParams(
-				(screenWidth - dpToPixel(30)) / 2, LayoutParams.WRAP_CONTENT);
-		showReviewPlanBtn.setLayoutParams(params);
-		showProcessBtn.setLayoutParams(params);
+		if (unit != null) {
+			LayoutParams params = new LayoutParams(
+					(screenWidth - dpToPixel(30)) / 2,
+					LayoutParams.WRAP_CONTENT);
+			showReviewPlanBtn.setLayoutParams(params);
+			showProcessBtn.setLayoutParams(params);
+		}
 	}
 
 	public void initListeners() {
 
 		showReviewPlanBtn.setOnClickListener(new View.OnClickListener() {
-
 			public void onClick(View v) {
 				adjustLayout();
 				ReviewPlanChart chart = new ReviewPlanChart();
@@ -70,7 +91,6 @@ public class ChartDialog extends Dialog implements ActivityInterface {
 			}
 		});
 		showProcessBtn.setOnClickListener(new View.OnClickListener() {
-			
 			public void onClick(View v) {
 				adjustLayout();
 				ProcessChart chart = new ProcessChart();
@@ -89,21 +109,21 @@ public class ChartDialog extends Dialog implements ActivityInterface {
 		// }
 		// });
 	}
-	private void adjustLayout(){
+
+	private void adjustLayout() {
 		if (((Activity) context).getRequestedOrientation() == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-			LayoutParams params = new LayoutParams(
-					LayoutParams.MATCH_PARENT,
+			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
 					LayoutParams.MATCH_PARENT);
 			params.setMargins(0, dpToPixel(32), 0, dpToPixel(32));
 			mainLayout.setLayoutParams(params);
 		} else {
-			LayoutParams params = new LayoutParams(
-					LayoutParams.MATCH_PARENT,
+			LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
 					LayoutParams.MATCH_PARENT);
 			params.setMargins(0, dpToPixel(8), 0, dpToPixel(8));
 			mainLayout.setLayoutParams(params);
 		}
 	}
+
 	private int dpToPixel(int dp) {
 		return (int) (0.5f + TypedValue.applyDimension(
 				TypedValue.COMPLEX_UNIT_DIP, dp, context.getResources()
