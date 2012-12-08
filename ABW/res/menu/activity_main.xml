@@ -3,13 +3,18 @@
 　　2、ifRoom：如果有足够的空间，这个值会使菜单项显示在Action Bar上。
 　　3、never：这个值使菜单项永远都不出现在Action Bar上。
 　　4、withText：这个值使菜单项和它的图标，菜单文本一起显示。 -->
-    <item android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+     <item android:id="@+id/menu_stats"
+        android:title="@string/menu_stats"
+        android:orderInCategory="98"
+        android:showAsAction="never"
+       />
     <item android:id="@+id/menu_load_dicts"
         android:title="@string/menu_load_dicts"
         android:orderInCategory="99"
         android:showAsAction="never" 
        />
+    <item android:id="@+id/menu_settings"
+        android:title="@string/menu_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>
