@@ -105,8 +105,9 @@ public final class R {
         public static final int fragment_container=0x7f0a0002;
         public static final int load_dict_list_dicts=0x7f0a0000;
         public static final int menu_load_dicts=0x7f0a001d;
-        public static final int menu_settings=0x7f0a001c;
-        public static final int menu_show_chart=0x7f0a001e;
+        public static final int menu_settings=0x7f0a001e;
+        public static final int menu_show_chart=0x7f0a001f;
+        public static final int menu_stats=0x7f0a001c;
         public static final int scroll_container=0x7f0a0001;
         public static final int study_buttons=0x7f0a0008;
         public static final int study_contentblock=0x7f0a0003;
@@ -133,13 +134,14 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f070000;
-        public static final int dict_load_stat_loaded=0x7f070005;
-        public static final int dict_load_stat_unload=0x7f070006;
+        public static final int dict_load_stat_loaded=0x7f070006;
+        public static final int dict_load_stat_unload=0x7f070007;
         public static final int hello_world=0x7f070001;
         public static final int menu_load_dicts=0x7f070003;
         public static final int menu_settings=0x7f070002;
-        public static final int menu_show_chart=0x7f070004;
-        public static final int title_activity_main=0x7f070007;
+        public static final int menu_show_chart=0x7f070005;
+        public static final int menu_stats=0x7f070004;
+        public static final int title_activity_main=0x7f070008;
     }
     public static final class style {
         public static final int AppTheme=0x7f080000;
