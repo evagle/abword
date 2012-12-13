@@ -48,6 +48,7 @@ public class Dict {
 		try {
 			unitDBHelper = new UnitDBHelper(dictName);
 			unitList = unitDBHelper.getAllUnitOfDict(dictName);
+			Collections.sort(unitList);
 			unitDBHelper.close();
 			totalUnitCount = unitList.size();
 			for (Unit u : unitList) {
@@ -67,7 +68,7 @@ public class Dict {
 				currentUnit = nonMemoList.get(0);
 				nonMemoList.remove(0);
 			}
-			// shuffleList(newWords);
+			//shuffleList(newWords);
 			Collections.sort(nonMemoList);
 		} catch (Exception e) {
 			currentUnit = null;
@@ -121,6 +122,14 @@ public class Dict {
 
 	public void setMemoedUnitCount(int memoedUnitCount) {
 		this.memoedUnitCount = memoedUnitCount;
+	}
+
+	public List<Unit> getUnitList() {
+		return unitList;
+	}
+
+	public void setUnitList(List<Unit> unitList) {
+		this.unitList = unitList;
 	}
 
 }

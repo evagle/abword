@@ -57,8 +57,11 @@ public class StudyControler {
 	}
 
 	public void loadCurrentUnit(boolean loadfromfile) {
-		List<String> list = ABFileHelper.readLines(Configure.APP_DATA_PATH
-				+ CURRENT_UNIT_WORDS + dictName);
+		List<String> list=null;
+		if(loadfromfile){
+			 list = ABFileHelper.readLines(Configure.APP_DATA_PATH
+				+ CURRENT_UNIT_WORDS + dictName+"_"+unit.getUnitId());
+		}
 		unit.init();
 		if (list == null || !unit.parseFromString(list))
 			unit.initWordsList();
@@ -66,9 +69,17 @@ public class StudyControler {
 
 	public void saveCurrentUnitToFile() {
 		ABFileHelper.rewriteFile(Configure.APP_DATA_PATH + CURRENT_UNIT_WORDS
-				+ dictName, unit.wordListToString());
+				+ dictName+"_"+unit.getUnitId(), unit.wordListToString());
 	}
-
+	
+	public int getProgress(STUDY_TYPE type){
+		if(type == STUDY_TYPE.REVIEW || unit.getMemoedCount()+unit.getIgnoreCount()>=unit.getTotalWordCount()  ){
+			return unit.getShowedWords().size()*100/(unit.getShowedWords().size()+unit.getMemodWords().size());
+		}else{
+			return (unit.getMemoedCount()+unit.getIgnoreCount())*100/unit.getTotalWordCount();
+		}
+			
+	}
 	public boolean hasNext(STUDY_TYPE studyType) {
 		if (studyType.equals(STUDY_TYPE.LEARN_NEW)) {
 			if (unit.getNonMemodWords().size() > 0)

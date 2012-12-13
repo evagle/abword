@@ -38,7 +38,7 @@ public class BoxView extends LinearLayout{
 	private int marginRight;
 	private int marginBottom;
 	private int color;
-	public static enum BOX_TYPE {BOX_MEMOED,BOX_CURR,BOX_LOCKED};
+	public static enum BOX_TYPE {BOX_MEMOED,BOX_CURR,BOX_LOCKED,BOX_NOT_START,BOX_FINISHED,BOX_LEARNING};
 	private BOX_TYPE type;
 	
 	public BoxView(Context context, AttributeSet attrs) {
@@ -66,9 +66,9 @@ public class BoxView extends LinearLayout{
 		LayoutInflater inflater = ((Activity)context).getLayoutInflater();
 		if(type.equals(BOX_TYPE.BOX_LOCKED))
 			mView = inflater.inflate(R.layout.box_view_lock_layout, null, true);
-		else if(type.equals(BOX_TYPE.BOX_CURR)){
+		else  {
 			mView = inflater.inflate(R.layout.box_view_cur_layout, null, true);
-		}
+		} 
 		tvWord = (TextView) mView.findViewById(R.id.box_view_word);
 		tvUnitNUm = (TextView) mView.findViewById(R.id.box_view_lock_unit_num);
 		imageLock = (ImageView)mView.findViewById(R.id.box_view_lock_lock);
@@ -93,7 +93,7 @@ public class BoxView extends LinearLayout{
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		tvPhonogram.setText(unit.getDelegatedWord().getPhonogram());
+		tvPhonogram.setText(unit.getMemoedCount()+"/"+unit.getTotalWordCount());
     	
     	GradientDrawable background = (GradientDrawable) getResources()
 				.getDrawable(R.drawable.rounded_rect);

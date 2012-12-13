@@ -25,6 +25,7 @@ import com.souldak.controler.DictManager;
 import com.souldak.db.WordDBHelper;
 import com.souldak.model.Dict;
 import com.souldak.model.Unit;
+import com.souldak.model.Unit.UNIT_STATE;
 import com.souldak.util.ABFileHelper;
 import com.souldak.util.SharePreferenceHelper;
 import com.souldak.util.TimeHelper;
@@ -127,46 +128,69 @@ public class MainActivity extends Activity implements ActivityInterface {
 				LinearLayout containerlayout = (LinearLayout) MainActivity.this
 						.findViewById(R.id.fragment_container);
 				containerlayout.removeAllViews();
-				List<Unit> needShowUnitList = new ArrayList<Unit>();
-				List<Integer> colorList = new ArrayList<Integer>();
+//				List<Unit> needShowUnitList = new ArrayList<Unit>();
+//				List<Integer> colorList = new ArrayList<Integer>();
 				List<BoxView> boxList = new ArrayList<BoxView>();
-				List<BOX_TYPE> boxTypeList = new ArrayList<BoxView.BOX_TYPE>();
-				if (selectedDict.getMemoedList().size() > 0) {
-					needShowUnitList.add(selectedDict.getMemoedList().get(0));
-					colorList.add(getResources()
-							.getColor(R.color.android_green));
-					boxTypeList.add(BOX_TYPE.BOX_MEMOED);
-				}
-				if (selectedDict.getCurrentUnit() != null) {
-					needShowUnitList.add(selectedDict.getCurrentUnit());
-					colorList.add(getResources().getColor(
-							R.color.android_yellow));
-					boxTypeList.add(BOX_TYPE.BOX_CURR);
-				}
-				needShowUnitList.addAll(selectedDict.getNonMemoList());
-				if (needShowUnitList.size() == 0)
-					return false;
-				for (int i = 0; i < selectedDict.getNonMemoList().size(); i++) {
-					colorList
-							.add(getResources().getColor(R.color.android_blue));
-					boxTypeList.add(BOX_TYPE.BOX_LOCKED);
-				}
+//				List<BOX_TYPE> boxTypeList = new ArrayList<BoxView.BOX_TYPE>();
+//				if (selectedDict.getMemoedList().size() > 0) {
+//					needShowUnitList.add(selectedDict.getMemoedList().get(0));
+//					colorList.add(getResources()
+//							.getColor(R.color.android_green));
+//					boxTypeList.add(BOX_TYPE.BOX_MEMOED);
+//				}
+//				if (selectedDict.getCurrentUnit() != null) {
+//					needShowUnitList.add(selectedDict.getCurrentUnit());
+//					colorList.add(getResources().getColor(
+//							R.color.android_yellow));
+//					boxTypeList.add(BOX_TYPE.BOX_CURR);
+//				}
+//				needShowUnitList.addAll(selectedDict.getNonMemoList());
+//				if (needShowUnitList.size() == 0)
+//					return false;
+//				for (int i = 0; i < selectedDict.getNonMemoList().size(); i++) {
+//					colorList
+//							.add(getResources().getColor(R.color.android_blue));
+//					boxTypeList.add(BOX_TYPE.BOX_LOCKED);
+//				}
 
-				LinearLayout row = new LinearLayout(MainActivity.this);
-
-				for (int i = 0; i < needShowUnitList.size(); i += 2) {
-					row = new LinearLayout(MainActivity.this);
-					for (int col = i; col <= i + 1
-							&& col < needShowUnitList.size(); col++) {
-						BoxView box = generateBox(needShowUnitList.get(col),
-								colorList.get(col), boxTypeList.get(col),
-								col + 1);
-						row.addView(box);
-						boxList.add(box);
+				//LinearLayout row = new LinearLayout(MainActivity.this);
+				List<Unit> needShowUnitList = selectedDict.getUnitList();
+				for (int i = 0; i < needShowUnitList.size(); i ++) {
+					//row = new LinearLayout(MainActivity.this);
+					int color ;
+					BOX_TYPE boxtype;
+					if(needShowUnitList.get(i).getUnitState()==UNIT_STATE.NOT_START){
+						color = getResources().getColor(R.color.android_blue);
+						boxtype = BOX_TYPE.BOX_NOT_START;
 					}
+					else if(needShowUnitList.get(i).getUnitState()==UNIT_STATE.LEARNING ||
+							needShowUnitList.get(i).getUnitState()==UNIT_STATE.LEARNED_ONE_TIME){
+						color = getResources().getColor(R.color.android_yellow);
+						boxtype = BOX_TYPE.BOX_LEARNING;
+					}
+					else{
+						color = getResources().getColor(R.color.android_green);
+						boxtype = BOX_TYPE.BOX_FINISHED;
+					}
+//					for (int col = i; col <= i + 1
+//							&& col < needShowUnitList.size(); col++) {
+						BoxView box = generateBox(needShowUnitList.get(i),
+								color , boxtype,
+								i + 1);
+						//row.addView(box);
+						boxList.add(box);
+						
+//					}
+//					containerlayout.addView(row);
+				}
+				for(int i=0;i<boxList.size();i+=2){
+					LinearLayout row = new LinearLayout(MainActivity.this);
+					row.addView(boxList.get(i));
+					if(i+1<boxList.size())
+						row.addView(boxList.get(i+1));
 					containerlayout.addView(row);
 				}
-
+				
 				wordDBHelper = new WordDBHelper(needShowUnitList.get(0)
 						.getDictName());
 				for (int i = 0; i < boxList.size(); i++) {
@@ -184,12 +208,12 @@ public class MainActivity extends Activity implements ActivityInterface {
 
 							}
 						});
-					} else if (box.getType().equals(BOX_TYPE.BOX_CURR)) {
+					} else  {
 						box.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
 								final BoxView box = (BoxView) v;
 								box.randomWord(wordDBHelper);
-
+								
 								new android.app.AlertDialog.Builder(
 										MainActivity.this)
 										// Context

@@ -258,8 +258,14 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 			return 1;
 		else if (interval < another.interval)
 			return -1;
-		else
-			return 0;
+		else{
+			if(memoEffect > another.memoEffect)
+				return 1;
+			else if (memoEffect < another.memoEffect)
+				return -1;
+			else
+				return 0;
+		}
 	}
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {

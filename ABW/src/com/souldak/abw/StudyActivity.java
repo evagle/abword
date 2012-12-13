@@ -85,24 +85,20 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		Object lastUnit = SharePreferenceHelper.getPreferences(STUDY_LAST_UNIT, this);
 		if(lastDict != null && lastUnit!=null &&
 				dictName.equals((String)lastDict) && (unitId+"").equals(lastUnit)){
-			 
 				controler.loadCurrentUnit(true);
-			 
 		}else{
-			controler.loadCurrentUnit(false);
+			controler.loadCurrentUnit(true);
 		}
 		
-		
-		
-	
-		Log.w("StudyActivity", "Unit word num =" + controler.getUnit().getTotalWordCount());
+		Log.i("StudyActivity", "Unit word num =" + controler.getUnit().getTotalWordCount());
 		findViews();
 		initCompenents();
 		initListeners();
 		onStateChange();
-
+		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler.getUnit().getDictName(), this);
+		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler.getUnit().getUnitId()+"", this);
 	}
- 
+	
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -141,6 +137,9 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	@Override
 	public void onResume(){
 		super.onResume();
+//		Object lastDict = SharePreferenceHelper.getPreferences(STUDY_LAST_DICT, this);
+//		Object lastUnit = SharePreferenceHelper.getPreferences(STUDY_LAST_UNIT, this);
+//		
 		controler.loadCurrentUnit(true);
 	}
 	@Override
@@ -359,10 +358,16 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			ProgressBar bar = new ProgressBar(this, null,
 					android.R.attr.progressBarStyleHorizontal);
 			LayoutParams parms = new LayoutParams(LayoutParams.MATCH_PARENT,
-					dpToPixel(5));
+					dpToPixel(3));
 			bar.setLayoutParams(parms);
-			bar.setProgress(controler.getUnit().getMemoedCount() * 100
-					/ controler.getUnit().getTotalWordCount());
+			
+			bar.setProgress(controler.getProgress(studyType));
+			if(studyType == STUDY_TYPE.REVIEW){
+				bar.setProgressDrawable(getResources().getDrawable(R.drawable.progressbar_yellow));
+			}else{
+				bar.setProgressDrawable(getResources().getDrawable(R.drawable.progressbar_blue));
+			}
+ 
 			bar.setOnClickListener(new View.OnClickListener() {
 				
 				public void onClick(View v) {

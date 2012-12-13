@@ -22,7 +22,8 @@ public class Unit implements Comparable<Unit> {
 	private List<WordItem> showedWords;
 	private List<WordItem> ingnoredWords;
 	private List<WordItem> finishedWords;
-
+	
+	public enum UNIT_STATE {NOT_START,LEARNING,LEARNED_ONE_TIME,FINISHED};
 	public Unit() {
 		init();
 	}
@@ -42,6 +43,17 @@ public class Unit implements Comparable<Unit> {
 		}
 		finished = 1;
 		return true;
+	}
+	public UNIT_STATE getUnitState(){
+		if(finished == 1) 
+			return UNIT_STATE.FINISHED;
+		else if(memoedCount==0)
+			return UNIT_STATE.NOT_START;
+		else if(memoedCount+ ignoreCount < totalWordCount)
+			return UNIT_STATE.LEARNING;
+		else  
+			return UNIT_STATE.LEARNED_ONE_TIME;
+		 
 	}
 	public List<String> wordListToString() {
 		//The last one may not be memorized because of a sudden exit
