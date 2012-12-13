@@ -2,12 +2,17 @@
     
     <item android:id="@+id/menu_show_chart"
         android:title="@string/menu_show_chart"
-        android:orderInCategory="99"
+        android:orderInCategory="98"
         android:showAsAction="always"
         android:icon="@drawable/chart_icon"
        />
+    <item android:id="@+id/menu_stats"
+        android:title="@string/menu_stats"
+        android:orderInCategory="99"
+        android:showAsAction="never" />
      <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+      
 </menu>

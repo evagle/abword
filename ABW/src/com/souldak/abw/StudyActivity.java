@@ -99,16 +99,27 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler.getUnit().getUnitId()+"", this);
 	}
 	
+	@SuppressWarnings("unused")
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		//ABActionBar.getABActionBar(StudyActivity.this, menu);
 		this.getMenuInflater().inflate(R.menu.menu_study, menu);
 		MenuItem setting = menu.findItem(R.id.menu_settings);
+		MenuItem stats = menu.findItem(R.id.menu_stats);
 		MenuItem showChart = menu.findItem(R.id.menu_show_chart);
 		showChart.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
 				ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,controler.getUnit());
+				chartDialog.show();
+				return true;
+			}
+		});
+		stats.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			public boolean onMenuItemClick(MenuItem item) {
+//				ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog,controler.getUnit());
+//				chartDialog.show();
+				ChartDialog chartDialog=new ChartDialog(StudyActivity.this, R.style.chart_dialog );
 				chartDialog.show();
 				return true;
 			}
