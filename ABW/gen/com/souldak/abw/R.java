@@ -73,16 +73,18 @@ public final class R {
         public static final int load=0x7f020025;
         public static final int load_wooden=0x7f020026;
         public static final int lock3=0x7f020027;
-        public static final int reload=0x7f020028;
-        public static final int reload_wooden=0x7f020029;
-        public static final int rounded_rect=0x7f02002a;
-        public static final int selected_background=0x7f02002b;
-        public static final int spinner_default_holo_light=0x7f02002c;
-        public static final int spinner_disabled_holo_light=0x7f02002d;
-        public static final int study_note=0x7f02002e;
-        public static final int wordbg1=0x7f02002f;
-        public static final int xpic6475=0x7f020030;
-        public static final int yellow_button=0x7f020031;
+        public static final int progressbar_blue=0x7f020028;
+        public static final int progressbar_yellow=0x7f020029;
+        public static final int reload=0x7f02002a;
+        public static final int reload_wooden=0x7f02002b;
+        public static final int rounded_rect=0x7f02002c;
+        public static final int selected_background=0x7f02002d;
+        public static final int spinner_default_holo_light=0x7f02002e;
+        public static final int spinner_disabled_holo_light=0x7f02002f;
+        public static final int study_note=0x7f020030;
+        public static final int wordbg1=0x7f020031;
+        public static final int xpic6475=0x7f020032;
+        public static final int yellow_button=0x7f020033;
     }
     public static final class id {
         public static final int adapter_load_dict_row_image=0x7f0a000a;
