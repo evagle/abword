@@ -17,6 +17,7 @@ package com.souldak.chart;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.renderer.DefaultRenderer;
@@ -27,6 +28,8 @@ import android.view.View;
 
 import com.souldak.abw.R;
 import com.souldak.config.Configure;
+import com.souldak.db.UnitDBHelper;
+import com.souldak.db.WordDBHelper;
 import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
 
@@ -34,7 +37,6 @@ public class ProcessChart extends AbstractDemoChart {
 	private Unit unit;
 	private int nonMemoCount = 0;
 	private int memorizingCount = 0;
-	//private int memoedCount;
 	private int finishedCount = 0;
 	private int ignoreCount = 0;
 
@@ -53,10 +55,12 @@ public class ProcessChart extends AbstractDemoChart {
 	}
 
 	private void initValues() {
+		
+		
 		ignoreCount  = unit.getIgnoreCount();
 		for(WordItem w : unit.getMemodWords())
 			if(w.getIngnore()==1){
-				int ti=0;
+				continue;
 			}
 			else if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT ){
 				memorizingCount++;
@@ -65,7 +69,7 @@ public class ProcessChart extends AbstractDemoChart {
 			}
 		for(WordItem w : unit.getShowedWords())
 			if(w.getIngnore()==1){
-				int ti=0;
+				continue;
 			}
 			else if(w.getInterval()>0&&w.getMemoEffect()<=Configure.MAX_MEMO_EFFECT){
 				memorizingCount++ ;
@@ -74,17 +78,13 @@ public class ProcessChart extends AbstractDemoChart {
 			}
 		nonMemoCount += unit.getNonMemodWords().size();
 		finishedCount = unit.getTotalWordCount() - ignoreCount - memorizingCount -nonMemoCount;
-
-		
-//		for (WordItem w : unit.getWords()) {
-//			if (w.getIngnore() == 1 || w.getMemoEffect() >= 1) {
-//				memoedCount++;
-//			} else if (w.getMemoList().size() == 0) {
-//				nonMemoCount++;
-//			} else {
-//				memorizingCount++;
-//			}
-//		}
+		//不定时更新memoed count，修正错误
+		if(new Random().nextInt(100)<20){
+			UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
+			unit.setMemoedCount(memorizingCount);
+			unitDBHelper.update(unit);
+			unitDBHelper.close();
+		}
 	}
 
 	/**

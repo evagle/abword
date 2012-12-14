@@ -43,7 +43,6 @@ public class BoxView extends LinearLayout{
 	
 	public BoxView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		// TODO Auto-generated constructor stub
 	}
 	public BoxView(Context context,Unit unit,
 			int marginLeft,int marginTop,int marginRight,int marginBottom
@@ -58,7 +57,6 @@ public class BoxView extends LinearLayout{
 		this.color = color;
 		this.type = type;
 		init();
-		// TODO Auto-generated constructor stub
 	}
 	 
 	@SuppressLint("NewApi")

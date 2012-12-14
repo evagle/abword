@@ -148,16 +148,12 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	@Override
 	public void onResume(){
 		super.onResume();
-//		Object lastDict = SharePreferenceHelper.getPreferences(STUDY_LAST_DICT, this);
-//		Object lastUnit = SharePreferenceHelper.getPreferences(STUDY_LAST_UNIT, this);
-//		
-		controler.loadCurrentUnit(true);
+		//controler.loadCurrentUnit(true);
 	}
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			// app icon in Action Bar clicked; go home
 			Intent intent = new Intent(this, MainActivity.class);
 			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
@@ -175,7 +171,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		tvPhonogram = (TextView) findViewById(R.id.study_phonogram);
 		tvIgnore = (TextView) findViewById(R.id.study_tv_ignore);
 		// progressBar = (ProgressBar) findViewById(R.id.study_progressbar);
-
 	}
 
 	@SuppressLint("NewApi")
@@ -201,9 +196,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		params.setMargins(marginPixels / 2, marginPixels / 2, marginPixels / 2,
 				marginPixels / 4);
 		contentBlock.setLayoutParams(params);
-
 		// changeButtons(STUDY_STATE.SHOW_ANSWER);
-
 		tvWord.setTypeface(dejaVuSans);
 
 		tvPhonogram.setTypeface(dejaVuSans);
@@ -355,7 +348,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 	public void changeButtons(STUDY_STATE state) {
 		if (state.equals(STUDY_STATE.SHOW_ANSWER)) {
-			// progressBar.setVisibility(View.GONE);
 			buttonsBlock.removeAllViews();
 			buttonsBlock.addView(getButton("GOOD", R.color.android_green,
 					(screenWidth - marginPixels - 32) / 3, buttonHeight, 0, 8));
@@ -364,7 +356,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			buttonsBlock.addView(getButton("BAD", R.color.android_green,
 					(screenWidth - marginPixels - 32) / 3, buttonHeight, 8, 0));
 		} else if (state.equals(STUDY_STATE.LEARNING)) {
-			// buttonsBlock.addView(getButton("SHOW ANSWER",R.color.android_green,(screenWidth-marginPixels),buttonHeight,0,0));
 			buttonsBlock.removeAllViews();
 			ProgressBar bar = new ProgressBar(this, null,
 					android.R.attr.progressBarStyleHorizontal);
@@ -378,7 +369,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			}else{
 				bar.setProgressDrawable(getResources().getDrawable(R.drawable.progressbar_blue));
 			}
- 
 			bar.setOnClickListener(new View.OnClickListener() {
 				
 				public void onClick(View v) {
@@ -414,18 +404,12 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				1f, 0f);
 		alpha.setDuration(500);
 		alpha.start();
-		// ObjectAnimator.ofFloat(contentBlock, "rotationY", 0, 180)
-		// .setDuration(500).start();
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		phrasesBlock.removeAllViews();
-		// ObjectAnimator.ofFloat(contentBlock, "rotationY", 180, 360)
-		// .setDuration(500).start();
-
 	}
 
 	@SuppressLint("NewApi")
@@ -443,11 +427,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				0f, 1f);
 		alpha.setDuration(500);
 		alpha.start();
-		// ObjectAnimator.ofFloat(contentBlock, "rotationY", 0, 180)
-		// .setDuration(500).start();
-		// ObjectAnimator.ofFloat(contentBlock, "rotationY", 180, 360)
-		// .setDuration(500).start();
-
 	}
 
 	@SuppressLint("NewApi")
@@ -458,7 +437,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				.getDrawable(R.drawable.yellow_button);
 		// background.setColor(getResources().getColor(color));
 		background.setAlpha(225);
-		// background.setGradientRadius(4);
 		button.setText(text);
 		button.setBackground(background);
 		LayoutParams lp = new LayoutParams(width, height);
