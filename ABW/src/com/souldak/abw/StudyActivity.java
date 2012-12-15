@@ -89,6 +89,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		}else{
 			controler.loadCurrentUnit(true);
 		}
+		controler.updateIntervals();
 		
 		Log.i("StudyActivity", "Unit word num =" + controler.getUnit().getTotalWordCount());
 		findViews();
@@ -201,9 +202,10 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 		tvPhonogram.setTypeface(dejaVuSans);
 		showNextWord();
-		
-		tvIgnore.setText(Html.fromHtml("<u>"+"Ignore"+"</u>"));
-
+//		if(current!=null)
+//			tvIgnore.setText(Html.fromHtml(current.getMemoList().size()+" "+"<u>"+"Ignore"+"</u>"));
+//		else
+//			tvIgnore.setText(Html.fromHtml("<u>"+"Ignore"+"</u>"));
 	}
 	public void initListeners() {
 		contentBlock.setOnClickListener(new View.OnClickListener() {
@@ -283,6 +285,10 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		if (current != null) {
 			tvWord.setText(current.getWord());
 			tvPhonogram.setText(current.getPhonogram());
+			if(current!=null) 
+				tvIgnore.setText(Html.fromHtml(current.getMemoList().size()+" "+"<u>"+"Ignore"+"</u>"));
+			else
+				tvIgnore.setText(Html.fromHtml("<u>"+"Ignore"+"</u>"));
 		} else {
 			if(controler.currentUnitFinished()){
 				new android.app.AlertDialog.Builder(StudyActivity.this)//Context

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import android.content.Context;
 
@@ -29,6 +30,7 @@ public class StudyControler {
 	// private int unitId;
 	private WordDBHelper wordDBHelper;
 	private ClickStatsDBHelper clickStatsDBHelper;
+	private boolean CLOSED = false;
 	private HashMap<String, Integer> effectMap = new HashMap<String, Integer>() {
 		private static final long serialVersionUID = 1L;
 		{
@@ -54,32 +56,67 @@ public class StudyControler {
 	public void close() {
 		wordDBHelper.close();
 		clickStatsDBHelper.close();
+		CLOSED = false;
 	}
 
 	public void loadCurrentUnit(boolean loadfromfile) {
-		List<String> list=null;
-		if(loadfromfile){
-			 list = ABFileHelper.readLines(Configure.APP_DATA_PATH
-				+ CURRENT_UNIT_WORDS + dictName+"_"+unit.getUnitId());
+		List<String> list = null;
+		if (loadfromfile) {
+			list = ABFileHelper.readLines(Configure.APP_DATA_PATH
+					+ CURRENT_UNIT_WORDS + dictName + "_" + unit.getUnitId());
 		}
 		unit.init();
 		if (list == null || !unit.parseFromString(list))
 			unit.initWordsList();
 	}
 
+	public void updateIntervals() {
+		if (new Random().nextInt(100) < 20) {
+			new Thread(new Runnable() {
+				public void run() {
+					WordDBHelper helper = new WordDBHelper(unit.getDictName());
+					for (WordItem word : unit.getWords()) {
+						if (!CLOSED) {
+							WordItem w = helper.getWord(word.getWord());
+							double interval = TimeHelper.getDiffDay(
+									w.getNextMemoDate(), new Date());
+							if (interval < 1)
+								w.setInterval(1d);
+							else
+								w.setInterval(interval);
+							w.setNextMemoDate(TimeHelper.addDate(new Date(),
+									(int) w.getInterval()));
+							word.setInterval(w.getInterval());
+							word.setNextMemoDate(w.getNextMemoDate());
+							helper.update(w);
+						}
+					}
+					helper.close();
+				}
+			}).start();
+		}
+	}
+
 	public void saveCurrentUnitToFile() {
 		ABFileHelper.rewriteFile(Configure.APP_DATA_PATH + CURRENT_UNIT_WORDS
-				+ dictName+"_"+unit.getUnitId(), unit.wordListToString());
+				+ dictName + "_" + unit.getUnitId(), unit.wordListToString());
 	}
-	
-	public int getProgress(STUDY_TYPE type){
-		if(type == STUDY_TYPE.REVIEW || unit.getMemoedCount()+unit.getIgnoreCount()>=unit.getTotalWordCount()  ){
-			return unit.getShowedWords().size()*100/(unit.getShowedWords().size()+unit.getMemodWords().size());
-		}else{
-			return (unit.getMemoedCount()+unit.getIgnoreCount())*100/unit.getTotalWordCount();
+
+	public int getProgress(STUDY_TYPE type) {
+		if (type == STUDY_TYPE.REVIEW
+				|| unit.getMemoedCount() + unit.getIgnoreCount() >= unit
+						.getTotalWordCount()) {
+			return unit.getShowedWords().size()
+					* 100
+					/ (unit.getShowedWords().size() + unit.getMemodWords()
+							.size());
+		} else {
+			return (unit.getMemoedCount() + unit.getIgnoreCount()) * 100
+					/ unit.getTotalWordCount();
 		}
-			
+
 	}
+
 	public boolean hasNext(STUDY_TYPE studyType) {
 		if (studyType.equals(STUDY_TYPE.LEARN_NEW)) {
 			if (unit.getNonMemodWords().size() > 0)
@@ -149,10 +186,10 @@ public class StudyControler {
 	public void finishMemoWord(WordItem w, Date startTime, double timeDelta,
 			String gradeStr) {
 		int grade = 0;
-		if(gradeStr!=null&&effectMap.containsKey(gradeStr)){
+		if (gradeStr != null && effectMap.containsKey(gradeStr)) {
 			grade = effectMap.get(gradeStr);
 		}
-		 
+
 		UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
 		WordDBHelper wordDBHelper = new WordDBHelper(unit.getDictName());
 		if (w.getIngnore() == 1) {
@@ -167,25 +204,28 @@ public class StudyControler {
 		unitDBHelper.close();
 		wordDBHelper.close();
 		if (w.getIngnore() != 1) {
-			updateClickStats(TimeHelper.dateToString(new Date()),effectMap.get(gradeStr));
-			updateClickStats(ClickStatsDBHelper.SumRecordDate,effectMap.get(gradeStr));
+			updateClickStats(TimeHelper.dateToString(new Date()),
+					effectMap.get(gradeStr));
+			updateClickStats(ClickStatsDBHelper.SumRecordDate,
+					effectMap.get(gradeStr));
 		}
 	}
-	private void updateClickStats(String date,int grade){
+
+	private void updateClickStats(String date, int grade) {
 		ClickStatsItem item = clickStatsDBHelper.queryOne(date);
-		boolean isnew=false;
-		if (item == null){
+		boolean isnew = false;
+		if (item == null) {
 			isnew = true;
 			item = new ClickStatsItem(date);
 		}
 		item.setTotal(item.getTotal() + 1);
-		if(grade==5)
-			item.setGood(item.getGood()+1);
-		else if(grade==3)
-			item.setPass(item.getPass()+1);
-		else  
-			item.setBad(item.getBad()+1);
-		if(isnew)
+		if (grade == 5)
+			item.setGood(item.getGood() + 1);
+		else if (grade == 3)
+			item.setPass(item.getPass() + 1);
+		else
+			item.setBad(item.getBad() + 1);
+		if (isnew)
 			clickStatsDBHelper.insert(item);
 		else
 			clickStatsDBHelper.update(item);

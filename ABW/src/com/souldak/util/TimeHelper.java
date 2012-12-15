@@ -47,6 +47,9 @@ public class TimeHelper {
 	public static double getDiffSec(Date date1,Date date2){
 		return (date1.getTime()-date2.getTime())/1000;
 	}
+	public static double getDiffDay(Date date1,Date date2){
+		return (date1.getTime()-date2.getTime())/(1000*60*60*24);
+	}
 	public static long getDiffMilliSec(Date date1,Date date2){
 		return date1.getTime()-date2.getTime();
 	}
@@ -79,12 +82,15 @@ public static Date subDate(Date now){
 		}
 		return null;
 	}
-	public static Date addDate(Date now){
+	public static Date addDate(Date now ){
+		return addDate(now,1);
+	}
+	public static Date addDate(Date now,int n){
 		
 		SimpleDateFormat dft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar date = Calendar.getInstance();
 		date.setTime(now);
-		date.set(Calendar.DATE, date.get(Calendar.DATE) + 1);
+		date.set(Calendar.DATE, date.get(Calendar.DATE) + n);
 		try {
 			Date endDate = dft.parse(dft.format(date.getTime()));
 			return endDate;

@@ -128,7 +128,6 @@ public class Unit implements Comparable<Unit> {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void initWordsList() {
 		WordDBHelper wordDBHelper = new WordDBHelper(dictName);
 		words = wordDBHelper.getTotalUnitWords(unitId);

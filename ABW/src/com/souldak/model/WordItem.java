@@ -92,7 +92,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	public void addMemoRecord(Date startTime,Double timeDelta,int grade){
 		MemoRecord record= new MemoRecord(startTime,timeDelta,grade);
 		memoList.add(record);
-		if(grade>3){
+		if(grade > 3){
 			repetition++;
 			if(repetition==0){
 				interval=1;
@@ -111,11 +111,11 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		nextMemoDate = TimeHelper.addDateByHour(startTime, (int)interval);
 		
 		if(grade==5){
-			memoEffect += 0.03;
+			memoEffect += 0.1;
 		}else if(grade==3){
-			memoEffect += 0.015;
+			memoEffect += 0.06;
 		}else if(grade==0){
-			memoEffect += 0.005;
+			memoEffect += 0.03;
 		}
 		
 	}
@@ -128,9 +128,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		}
 		return list;
 	}
-	
-	
-	
+	 
 	@Override
 	public String toString() {
 		return "WordItem [id=" + id + ", word=" + word + ", dict=" + dict

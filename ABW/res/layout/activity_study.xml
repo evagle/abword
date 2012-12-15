@@ -15,7 +15,6 @@
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
- 
         <TextView
             android:id="@+id/study_tv_ignore"
             android:layout_width="wrap_content"
@@ -23,6 +22,7 @@
             android:layout_gravity="right"
             android:layout_marginRight="8dp"
             android:layout_marginTop="6dp"
+            android:gravity="right"
             android:text="ingore"
             android:textColor="@color/soft_grey"
             android:textSize="15sp" >
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:gravity="center_horizontal"
             android:text=""
             android:textColor="@android:color/black"
@@ -61,6 +61,7 @@
             android:layout_marginRight="16dp"
             android:orientation="vertical" >
         </LinearLayout>
+        
     </LinearLayout>
 
     <LinearLayout
