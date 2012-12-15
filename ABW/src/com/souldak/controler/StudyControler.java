@@ -71,13 +71,15 @@ public class StudyControler {
 	}
 
 	public void updateIntervals() {
-		if (new Random().nextInt(100) < 20) {
+		if (new Random().nextInt(100) < 30) {
 			new Thread(new Runnable() {
 				public void run() {
 					WordDBHelper helper = new WordDBHelper(unit.getDictName());
 					for (WordItem word : unit.getWords()) {
 						if (!CLOSED) {
 							WordItem w = helper.getWord(word.getWord());
+							if(w.getNextMemoDate()==null)
+								continue;
 							double interval = TimeHelper.getDiffDay(
 									w.getNextMemoDate(), new Date());
 							if (interval < 1)

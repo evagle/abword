@@ -92,14 +92,20 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	public void addMemoRecord(Date startTime,Double timeDelta,int grade){
 		MemoRecord record= new MemoRecord(startTime,timeDelta,grade);
 		memoList.add(record);
-		if(grade > 3){
+		if(grade >= 3){
 			repetition++;
 			if(repetition==0){
 				interval=1;
 			}else if(repetition==1){
-				interval=6;
+				if(grade ==3 )
+					interval = 3;
+				else
+					interval=6;
 			}else{
-				interval=interval*EF;
+				if(grade ==3)
+					interval=interval*EF/1.1;
+				else
+					interval=interval*EF;
 			}
 		}else{
 			repetition = 0;
