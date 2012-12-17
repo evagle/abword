@@ -11,6 +11,7 @@ public class Configure {
 	public static final String DATABASE_ROOT_PATH=APP_SD_ROOT_PATH+"database/";
 	public static final String DATABASE_DICT_STORAGE=DATABASE_ROOT_PATH+"dictstorage";
 	public static double MAX_MEMO_EFFECT = 1.0;
+	public static boolean IS_SHOW_RICITE_TIMES=false;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

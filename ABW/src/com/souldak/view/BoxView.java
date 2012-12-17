@@ -91,7 +91,10 @@ public class BoxView extends LinearLayout{
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		tvPhonogram.setText(unit.getMemoedCount()+"/"+unit.getTotalWordCount());
+		int memoAndIngnore= unit.getMemoedCount()+unit.getIgnoreCount();
+		if(memoAndIngnore>unit.getTotalWordCount())
+			memoAndIngnore = unit.getTotalWordCount();
+		tvPhonogram.setText(memoAndIngnore+"/"+unit.getTotalWordCount());
     	
     	GradientDrawable background = (GradientDrawable) getResources()
 				.getDrawable(R.drawable.rounded_rect);

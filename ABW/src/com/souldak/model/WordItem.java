@@ -93,9 +93,8 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		MemoRecord record= new MemoRecord(startTime,timeDelta,grade);
 		memoList.add(record);
 		if(grade >= 3){
-			repetition++;
 			if(repetition==0){
-				interval=1;
+				interval = 2;
 			}else if(repetition==1){
 				if(grade ==3 )
 					interval = 3;
@@ -103,10 +102,11 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 					interval=6;
 			}else{
 				if(grade ==3)
-					interval=interval*EF/1.1;
+					interval=interval*EF/1.2;
 				else
 					interval=interval*EF;
 			}
+			repetition++;
 		}else{
 			repetition = 0;
 			interval = 1;
@@ -114,16 +114,16 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		EF=EF+(0.1-(5-grade)*(0.08+(5-grade)*0.02));
 		if(EF<1.3)
 			EF=1.3;
-		nextMemoDate = TimeHelper.addDateByHour(startTime, (int)interval);
+		nextMemoDate = TimeHelper.addDate(startTime, (int)interval);
 		
 		if(grade==5){
-			memoEffect += 0.1;
+			memoEffect += 0.04;
 		}else if(grade==3){
-			memoEffect += 0.06;
-		}else if(grade==0){
 			memoEffect += 0.03;
+		}else if(grade==0){
+			memoEffect += 0.02;
 		}
-		
+		 
 	}
 	
 	public List<String> paraphrasesList(){

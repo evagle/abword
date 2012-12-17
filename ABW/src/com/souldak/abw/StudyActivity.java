@@ -285,7 +285,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		if (current != null) {
 			tvWord.setText(current.getWord());
 			tvPhonogram.setText(current.getPhonogram());
-			if(current!=null) 
+			if(current!=null&&Configure.IS_SHOW_RICITE_TIMES) 
 				tvIgnore.setText(Html.fromHtml(current.getMemoList().size()+" "+"<u>"+"Ignore"+"</u>"));
 			else
 				tvIgnore.setText(Html.fromHtml("<u>"+"Ignore"+"</u>"));
