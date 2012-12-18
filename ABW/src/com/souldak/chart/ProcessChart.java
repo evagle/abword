@@ -55,8 +55,6 @@ public class ProcessChart extends AbstractDemoChart {
 	}
 
 	private void initValues() {
-		
-		
 		ignoreCount  = unit.getIgnoreCount();
 		for(WordItem w : unit.getMemodWords())
 			if(w.getIngnore()==1){
@@ -79,7 +77,7 @@ public class ProcessChart extends AbstractDemoChart {
 		nonMemoCount += unit.getNonMemodWords().size();
 		finishedCount = unit.getTotalWordCount() - ignoreCount - memorizingCount -nonMemoCount;
 		//不定时更新memoed count，修正错误
-		if(new Random().nextInt(100)<20){
+		if(new Random().nextInt(100)<50){
 			UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
 			unit.setMemoedCount(memorizingCount);
 			unitDBHelper.update(unit);

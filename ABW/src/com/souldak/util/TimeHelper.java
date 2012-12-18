@@ -8,7 +8,7 @@ import java.util.Date;
 import android.util.Log;
 
 public class TimeHelper {
-	
+	public static long ONE_DAY=1000*60*60*24;
 	public static String dateToString(Date date){
 		return new java.text.SimpleDateFormat("yyyy-MM-dd").format(date);
 	}
@@ -45,10 +45,10 @@ public class TimeHelper {
 		return ret;
 	}
 	public static double getDiffSec(Date date1,Date date2){
-		return (date1.getTime()-date2.getTime())/1000;
+		return (date1.getTime()-date2.getTime())/(double)1000;
 	}
 	public static double getDiffDay(Date date1,Date date2){
-		return (date1.getTime()-date2.getTime())/(1000*60*60*24);
+		return (date1.getTime()-date2.getTime())/(double)ONE_DAY;
 	}
 	public static long getDiffMilliSec(Date date1,Date date2){
 		return date1.getTime()-date2.getTime();

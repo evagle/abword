@@ -71,7 +71,7 @@ public class StudyControler {
 	}
 
 	public void updateIntervals() {
-		if (new Random().nextInt(100) < 30) {
+		if (new Random().nextInt(100) < 20) {
 			new Thread(new Runnable() {
 				public void run() {
 					WordDBHelper helper = new WordDBHelper(unit.getDictName());
@@ -86,11 +86,10 @@ public class StudyControler {
 								w.setInterval(1d);
 							else
 								w.setInterval(interval);
-							w.setNextMemoDate(TimeHelper.addDate(new Date(),
-									(int) w.getInterval()));
 							word.setInterval(w.getInterval());
-							word.setNextMemoDate(w.getNextMemoDate());
 							helper.update(w);
+						}else{
+							break;
 						}
 					}
 					helper.close();
