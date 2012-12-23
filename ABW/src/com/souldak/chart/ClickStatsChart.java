@@ -25,7 +25,7 @@ import android.graphics.Paint.Align;
 import android.view.View;
 
 public class ClickStatsChart extends AbstractDemoChart {
-
+	public static int MAX_SHOW_DAY_NUM = 30;
 	public String getName() {
 		return "Click Stats Chart";
 	}
@@ -44,7 +44,7 @@ public class ClickStatsChart extends AbstractDemoChart {
 		List<List<Date>> x = new ArrayList<List<Date>>();
 		ClickStatsDBHelper helper = new ClickStatsDBHelper();
 		List<ClickStatsItem> list = helper.queryRange(
-				TimeHelper.subDate(new Date(),8), new Date());
+				TimeHelper.subDate(new Date(),MAX_SHOW_DAY_NUM), new Date());
 		
 		Date today = TimeHelper.floorDate(new Date());
 

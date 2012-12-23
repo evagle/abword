@@ -23,7 +23,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="6dp"
             android:gravity="right"
-            android:text="ingore"
+            android:text="ignore"
             android:textColor="@color/soft_grey"
             android:textSize="15sp" >
         </TextView>

@@ -12,6 +12,9 @@ public class Configure {
 	public static final String DATABASE_DICT_STORAGE=DATABASE_ROOT_PATH+"dictstorage";
 	public static double MAX_MEMO_EFFECT = 1.0;
 	public static boolean IS_SHOW_RICITE_TIMES=false;
+	public static final String THEME_STYLE_DAY="day";
+	public static final String THEME_STYLE_NIGHT="night";
+	public static String THEME_STYLE=THEME_STYLE_DAY;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

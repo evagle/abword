@@ -107,6 +107,9 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 					interval=interval*EF;
 			}
 			repetition++;
+			//set up bound 30 to interval
+			if(interval > 30)
+				interval = 30;
 		}else{
 			repetition = 0;
 			interval = 1;

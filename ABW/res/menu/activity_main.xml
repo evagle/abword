@@ -1,20 +1,30 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 　1、always：这个值会使菜单项一直显示在Action Bar上。
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!--
+ 　1、always：这个值会使菜单项一直显示在Action Bar上。
 　　2、ifRoom：如果有足够的空间，这个值会使菜单项显示在Action Bar上。
 　　3、never：这个值使菜单项永远都不出现在Action Bar上。
-　　4、withText：这个值使菜单项和它的图标，菜单文本一起显示。 -->
-     <item android:id="@+id/menu_stats"
-        android:title="@string/menu_stats"
+　　4、withText：这个值使菜单项和它的图标，菜单文本一起显示。
+    -->
+    <item
+        android:id="@+id/menu_stats"
+        android:orderInCategory="97"
+        android:showAsAction="never"
+        android:title="@string/menu_stats"/>
+    <item
+        android:id="@+id/menu_load_dicts"
         android:orderInCategory="98"
         android:showAsAction="never"
-       />
-    <item android:id="@+id/menu_load_dicts"
-        android:title="@string/menu_load_dicts"
+        android:title="@string/menu_load_dicts"/>
+      <item
+        android:id="@+id/menu_theme"
         android:orderInCategory="99"
-        android:showAsAction="never" 
-       />
-    <item android:id="@+id/menu_settings"
-        android:title="@string/menu_settings"
+        android:showAsAction="never"
+        android:title="@string/menu_theme"/>
+    <item
+        android:id="@+id/menu_settings"
         android:orderInCategory="100"
-        android:showAsAction="never" />
+        android:showAsAction="never"
+        android:title="@string/menu_settings"/>
+
 </menu>

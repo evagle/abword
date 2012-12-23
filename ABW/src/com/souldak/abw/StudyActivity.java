@@ -57,18 +57,21 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private int marginPixels;
 	private int buttonHeight;
 	private Typeface dejaVuSans;
-//	private Unit unit;
 	private StudyControler controler;
 	private STUDY_TYPE studyType;
 	private STUDY_STATE studyState;
 	private WordItem current;
 	private Date startDate;
+	private StudyTheme currentThemeStyle;
 	private TTS tts;
 	public static String STUDY_LAST_DICT= "study_last_dict";
 	public static String STUDY_LAST_UNIT = "study_last_unit";
+	
 	public void onCreate(Bundle savedInstanceState) {
+		setTheme();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_study);
+		 
 		String dictName = getIntent().getExtras().getString("dictName");
 		int unitId = getIntent().getExtras().getInt("unitId");
 		String study_type =  getIntent().getExtras().getString("STUDY_TYPE");
@@ -98,6 +101,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		onStateChange();
 		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler.getUnit().getDictName(), this);
 		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler.getUnit().getUnitId()+"", this);
+		
 	}
 	
 	@SuppressWarnings("unused")
@@ -125,11 +129,13 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				return true;
 			}
 		});
+ 
 		actionBar = getActionBar();
 		actionBar.setDisplayOptions(ActionBar.DISPLAY_HOME_AS_UP,
 				ActionBar.DISPLAY_HOME_AS_UP);
 		return true;
 	}
+	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
@@ -163,7 +169,25 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-
+	public void initThemes(){
+		ThemeYellow =  new StudyTheme();
+		ThemeYellow.contentBlockBg = R.color.android_light_yellow;
+		ThemeYellow.buttonStyle =  R.drawable.yellow_button;
+		ThemeYellow.ignoreTextColor = R.color.soft_grey;
+		ThemeYellow.wordTextColor = R.color.android_black;
+		ThemeYellow.phonogramTextColor = R.color.android_dark_grey;
+		ThemeYellow.phrasesTextColor = R.color.android_black;
+		
+		ThemeGrey =  new StudyTheme();
+		ThemeGrey.contentBlockBg = R.color.android_light_black;
+		ThemeGrey.buttonStyle =  R.drawable.grey_button;
+		ThemeGrey.ignoreTextColor = R.color.android_white;
+		ThemeGrey.wordTextColor = R.color.android_white;
+		ThemeGrey.phonogramTextColor = R.color.android_white;
+		ThemeGrey.phrasesTextColor = R.color.android_white;
+		
+		currentThemeStyle = ThemeYellow;
+	}
 	public void findViews() {
 		contentBlock = (LinearLayout) findViewById(R.id.study_contentblock);
 		phrasesBlock = (LinearLayout) findViewById(R.id.study_phrases);
@@ -188,7 +212,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		GradientDrawable background = (GradientDrawable) getResources()
 				.getDrawable(R.drawable.rounded_rect);
 		background.setColor(getResources().getColor(
-				R.color.android_light_yellow));
+				currentThemeStyle.contentBlockBg));
 		background.setAlpha(225);
 		background.setCornerRadius(4);
 		contentBlock.setBackground(background);
@@ -198,34 +222,24 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				marginPixels / 4);
 		contentBlock.setLayoutParams(params);
 		// changeButtons(STUDY_STATE.SHOW_ANSWER);
+		
 		tvWord.setTypeface(dejaVuSans);
-
 		tvPhonogram.setTypeface(dejaVuSans);
+		//tvWord.setTextColor(getResources().getColor(currentThemeStyle.wordTextColor));
+		//tvPhonogram.setTextColor(getResources().getColor(currentThemeStyle.phonogramTextColor));
 		showNextWord();
-//		if(current!=null)
-//			tvIgnore.setText(Html.fromHtml(current.getMemoList().size()+" "+"<u>"+"Ignore"+"</u>"));
-//		else
-//			tvIgnore.setText(Html.fromHtml("<u>"+"Ignore"+"</u>"));
+		
 	}
+	
 	public void initListeners() {
 		contentBlock.setOnClickListener(new View.OnClickListener() {
 
 			@SuppressLint("NewApi")
 			public void onClick(View v) {
 				if (studyState.equals(STUDY_STATE.LEARNING)) {
-//					ObjectAnimator.ofFloat(v, "rotationY", 0, 180)
-//							.setDuration(400).start();
-//					ObjectAnimator.ofFloat(v, "rotationY", 180, 360)
-//							.setDuration(400).start();
 					togglePhrasesViews();
 					onStateChange();
 				} else {
-					// ObjectAnimator alpha = ObjectAnimator.ofFloat(v, "alpha",
-					// 1f, 0f);
-					// alpha.setRepeatMode(ObjectAnimator.REVERSE);
-					// alpha.setRepeatCount(1);
-					// alpha.setDuration(500);
-					// alpha.start();
 					togglePhrasesViews();
 				}
 
@@ -279,9 +293,21 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		}
 	}
 
+	@SuppressLint("NewApi")
 	public void showNextWord() {
 		current = controler.next(studyType);
 		startDate = new Date();
+		tvWord.setTextColor(getResources().getColor(currentThemeStyle.wordTextColor));
+		tvPhonogram.setTextColor(getResources().getColor(currentThemeStyle.phonogramTextColor));
+		tvIgnore.setTextColor(getResources().getColor(currentThemeStyle.ignoreTextColor));
+		GradientDrawable background = (GradientDrawable) getResources()
+				.getDrawable(R.drawable.rounded_rect);
+		background.setColor(getResources().getColor(
+				currentThemeStyle.contentBlockBg));
+		background.setAlpha(225);
+		background.setCornerRadius(4);
+		contentBlock.setBackground(background);
+		
 		if (current != null) {
 			tvWord.setText(current.getWord());
 			tvPhonogram.setText(current.getPhonogram());
@@ -426,7 +452,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			view.setText(phrase);
 			view.setTypeface(dejaVuSans);
 			view.setTextSize(20);
-
+			view.setTextColor(getResources().getColor(currentThemeStyle.phrasesTextColor));
 			phrasesBlock.addView(view);
 		}
 		ObjectAnimator alpha = ObjectAnimator.ofFloat(phrasesBlock, "alpha",
@@ -440,7 +466,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			int marginLeft, int marginRight) {
 		Button button = new Button(StudyActivity.this);
 		Drawable background = (Drawable) getResources()
-				.getDrawable(R.drawable.yellow_button);
+				.getDrawable(currentThemeStyle.buttonStyle);
 		// background.setColor(getResources().getColor(color));
 		background.setAlpha(225);
 		button.setText(text);
@@ -465,5 +491,26 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		});
 		return button;
 	}
-	 
+	private void setTheme(){
+		initThemes();
+		if(Configure.THEME_STYLE == Configure.THEME_STYLE_NIGHT){
+			currentThemeStyle = ThemeGrey;
+			this.setTheme(android.R.style.Theme_Holo);
+		}else{
+			currentThemeStyle = ThemeYellow;
+			this.setTheme(R.style.Theme_ABW);
+		}
+	}
+	private static StudyTheme ThemeYellow ;
+	private static StudyTheme ThemeGrey;
+	class StudyTheme{
+		public int contentBlockBg;
+		public int ignoreTextColor;
+		public int wordTextColor;
+		public int phonogramTextColor;
+		public int phrasesTextColor;
+		public int buttonColor;
+		public int buttonStyle;
+		
+	}
 }

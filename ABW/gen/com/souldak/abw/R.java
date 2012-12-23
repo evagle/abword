@@ -14,16 +14,18 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int android_blue=0x7f050005;
-        public static final int android_dark_grey=0x7f050002;
-        public static final int android_green=0x7f050001;
-        public static final int android_light_yellow=0x7f050004;
+        public static final int android_black=0x7f050001;
+        public static final int android_blue=0x7f050007;
+        public static final int android_dark_grey=0x7f050004;
+        public static final int android_green=0x7f050003;
+        public static final int android_light_black=0x7f050002;
+        public static final int android_light_yellow=0x7f050006;
         public static final int android_white=0x7f050000;
-        public static final int android_yellow=0x7f050003;
-        public static final int background=0x7f050008;
-        public static final int bg_yellow=0x7f050009;
-        public static final int honeycombish_blue=0x7f050006;
-        public static final int soft_grey=0x7f050007;
+        public static final int android_yellow=0x7f050005;
+        public static final int background=0x7f05000a;
+        public static final int bg_yellow=0x7f05000b;
+        public static final int honeycombish_blue=0x7f050008;
+        public static final int soft_grey=0x7f050009;
     }
     public static final class dimen {
         public static final int frag_rounding_radius=0x7f060003;
@@ -61,30 +63,31 @@ public final class R {
         public static final int close3=0x7f020019;
         public static final int dict_icon=0x7f02001a;
         public static final int dict_icon_32=0x7f02001b;
-        public static final int ic_action_search=0x7f02001c;
-        public static final int ic_launcher=0x7f02001d;
-        public static final int ic_menu_refresh_holo_light=0x7f02001e;
-        public static final int ic_menu_star_holo_light=0x7f02001f;
-        public static final int ic_stat_android=0x7f020020;
-        public static final int icon1=0x7f020021;
-        public static final int icon2=0x7f020022;
-        public static final int icon3=0x7f020023;
-        public static final int images=0x7f020024;
-        public static final int load=0x7f020025;
-        public static final int load_wooden=0x7f020026;
-        public static final int lock3=0x7f020027;
-        public static final int progressbar_blue=0x7f020028;
-        public static final int progressbar_yellow=0x7f020029;
-        public static final int reload=0x7f02002a;
-        public static final int reload_wooden=0x7f02002b;
-        public static final int rounded_rect=0x7f02002c;
-        public static final int selected_background=0x7f02002d;
-        public static final int spinner_default_holo_light=0x7f02002e;
-        public static final int spinner_disabled_holo_light=0x7f02002f;
-        public static final int study_note=0x7f020030;
-        public static final int wordbg1=0x7f020031;
-        public static final int xpic6475=0x7f020032;
-        public static final int yellow_button=0x7f020033;
+        public static final int grey_button=0x7f02001c;
+        public static final int ic_action_search=0x7f02001d;
+        public static final int ic_launcher=0x7f02001e;
+        public static final int ic_menu_refresh_holo_light=0x7f02001f;
+        public static final int ic_menu_star_holo_light=0x7f020020;
+        public static final int ic_stat_android=0x7f020021;
+        public static final int icon1=0x7f020022;
+        public static final int icon2=0x7f020023;
+        public static final int icon3=0x7f020024;
+        public static final int images=0x7f020025;
+        public static final int load=0x7f020026;
+        public static final int load_wooden=0x7f020027;
+        public static final int lock3=0x7f020028;
+        public static final int progressbar_blue=0x7f020029;
+        public static final int progressbar_yellow=0x7f02002a;
+        public static final int reload=0x7f02002b;
+        public static final int reload_wooden=0x7f02002c;
+        public static final int rounded_rect=0x7f02002d;
+        public static final int selected_background=0x7f02002e;
+        public static final int spinner_default_holo_light=0x7f02002f;
+        public static final int spinner_disabled_holo_light=0x7f020030;
+        public static final int study_note=0x7f020031;
+        public static final int wordbg1=0x7f020032;
+        public static final int xpic6475=0x7f020033;
+        public static final int yellow_button=0x7f020034;
     }
     public static final class id {
         public static final int adapter_load_dict_row_image=0x7f0a000a;
@@ -107,9 +110,10 @@ public final class R {
         public static final int fragment_container=0x7f0a0002;
         public static final int load_dict_list_dicts=0x7f0a0000;
         public static final int menu_load_dicts=0x7f0a001d;
-        public static final int menu_settings=0x7f0a001e;
-        public static final int menu_show_chart=0x7f0a001f;
+        public static final int menu_settings=0x7f0a001f;
+        public static final int menu_show_chart=0x7f0a0020;
         public static final int menu_stats=0x7f0a001c;
+        public static final int menu_theme=0x7f0a001e;
         public static final int scroll_container=0x7f0a0001;
         public static final int study_buttons=0x7f0a0008;
         public static final int study_contentblock=0x7f0a0003;
@@ -136,14 +140,15 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f070000;
-        public static final int dict_load_stat_loaded=0x7f070006;
-        public static final int dict_load_stat_unload=0x7f070007;
+        public static final int dict_load_stat_loaded=0x7f070007;
+        public static final int dict_load_stat_unload=0x7f070008;
         public static final int hello_world=0x7f070001;
         public static final int menu_load_dicts=0x7f070003;
         public static final int menu_settings=0x7f070002;
-        public static final int menu_show_chart=0x7f070005;
+        public static final int menu_show_chart=0x7f070006;
         public static final int menu_stats=0x7f070004;
-        public static final int title_activity_main=0x7f070008;
+        public static final int menu_theme=0x7f070005;
+        public static final int title_activity_main=0x7f070009;
     }
     public static final class style {
         public static final int AppTheme=0x7f080000;
@@ -156,23 +161,31 @@ public final class R {
         /**  style the overflow menu 
          */
         public static final int MyPopupMenu=0x7f080003;
-        public static final int Theme=0x7f080001;
         /**  Variation on the Holo Light theme that styles the Action Bar 
-<item name="android:actionOverflowButtonStyle">@style/MyOverflowButton</item>
+ <item name="android:actionOverflowButtonStyle">@style/MyOverflowButton</item> 
          */
         public static final int Theme_ABW=0x7f080002;
+        /**  Variation on the Holo Light theme that styles the Action Bar 
+         */
+        public static final int Theme_Dark=0x7f080001;
         /**  style the list navigation 
-  style name="MyDropDownNav" parent="android:style/Widget.Holo.Light.Spinner.DropDown.ActionBar">
+
+    style name="MyDropDownNav" parent="android:style/Widget.Holo.Light.Spinner.DropDown.ActionBar">
 		<item name="android:background">@drawable/ad_spinner_background_holo_light</item>
 		<item name="android:popupBackground">@drawable/ad_menu_dropdown_panel_holo_light</item>
 		<item name="android:dropDownSelector">@drawable/ad_selectable_background</item>
 	</style
- the following can be used to style the overflow menu button
-	     only do this if you have an *extremely* good reason to!! 
-<style name="MyOverflowButton" parent="@android:style/Widget.Holo.ActionButton.Overflow">
+    
+
+         the following can be used to style the overflow menu button
+	     only do this if you have an *extremely* good reason to!!
+    
+
+    <style name="MyOverflowButton" parent="@android:style/Widget.Holo.ActionButton.Overflow">
 		<item name="android:src">@android:drawable/ic_menu_view</item>
 		<item name="android:background">@drawable/action_button_background</item>
 	</style>
+    
          */
         public static final int chart_dialog=0x7f080006;
     }

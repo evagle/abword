@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.souldak.chart.ClickStatsChart;
+import com.souldak.config.Configure;
 import com.souldak.config.ConstantValue.STUDY_TYPE;
 import com.souldak.controler.DictManager;
 import com.souldak.db.WordDBHelper;
@@ -37,7 +38,7 @@ import com.souldak.view.BoxView.BOX_TYPE;
 public class MainActivity extends Activity implements ActivityInterface {
 	private ActionBar actionBar;
 	private DictManager dictManager;
-	private Dict currentDict;
+//	private Dict currentDict;
 	private ArrayAdapter actionAdapter;
 	private List<String> dictNameList;
 	private Dict selectedDict;
@@ -49,8 +50,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		
 		initCompenents();
 		initListeners();
 		
@@ -63,6 +62,7 @@ public class MainActivity extends Activity implements ActivityInterface {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		MenuItem setting = menu.findItem(R.id.menu_settings);
 		MenuItem loadDicts = menu.findItem(R.id.menu_load_dicts);
+		MenuItem theme = menu.findItem(R.id.menu_theme);
 		MenuItem showStats = menu.findItem(R.id.menu_stats);
 		setting.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
@@ -85,9 +85,21 @@ public class MainActivity extends Activity implements ActivityInterface {
 				return true;
 			}
 		});
+		theme.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+			public boolean onMenuItemClick(MenuItem item) {
+				if(Configure.THEME_STYLE == Configure.THEME_STYLE_DAY){
+					Configure.THEME_STYLE = Configure.THEME_STYLE_NIGHT;
+					item.setTitle("T-NIGHT");
+				}else{
+					Configure.THEME_STYLE  = Configure.THEME_STYLE_DAY;
+					item.setTitle("T-DAY");
+				}
+				return true;
+			}
+		});
 		return true;
 	}
-
+	 
 	@SuppressLint("NewApi")
 	public void initCompenents() {
 		scrollView = (ABScrollView) findViewById(R.id.scroll_container);

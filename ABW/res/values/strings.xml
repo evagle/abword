@@ -4,7 +4,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_load_dicts">Load Dict</string>
-     <string name="menu_stats">Stats</string>
+    <string name="menu_stats">Stats</string>
+    <string name="menu_theme">T-DAY</string>
     <string name="menu_show_chart">Chart</string>
     <string name="dict_load_stat_loaded">Reload</string>
     <string name="dict_load_stat_unload">Load</string>

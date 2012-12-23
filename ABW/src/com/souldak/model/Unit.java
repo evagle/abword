@@ -125,6 +125,7 @@ public class Unit implements Comparable<Unit> {
 			}
 		}
 		Collections.shuffle(nonMemodWords);
+		Collections.sort(memodWords);
 		return true;
 	}
 
