@@ -14,7 +14,10 @@ public class Configure {
 	public static boolean IS_SHOW_RICITE_TIMES=false;
 	public static final String THEME_STYLE_DAY="day";
 	public static final String THEME_STYLE_NIGHT="night";
-	public static String THEME_STYLE=THEME_STYLE_DAY;
+	public static final String THEME_STYLE_DARK="dark";
+	public static final String THEME_STYLE_YELLOW="yellow";
+	public static final String THEME_STYLE_GREEN="green";
+	public static String THEME_STYLE=THEME_STYLE_YELLOW;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

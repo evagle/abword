@@ -186,6 +186,14 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		ThemeGrey.phonogramTextColor = R.color.android_white;
 		ThemeGrey.phrasesTextColor = R.color.android_white;
 		
+		ThemeGreen =  new StudyTheme();
+		ThemeGreen.contentBlockBg = R.color.android_light_green;
+		ThemeGreen.buttonStyle =  R.drawable.green_button;
+		ThemeGreen.ignoreTextColor = R.color.soft_grey;
+		ThemeGreen.wordTextColor = R.color.android_black;
+		ThemeGreen.phonogramTextColor = R.color.android_dark_grey;
+		ThemeGreen.phrasesTextColor = R.color.android_black;
+		
 		currentThemeStyle = ThemeYellow;
 	}
 	public void findViews() {
@@ -493,16 +501,20 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	}
 	private void setTheme(){
 		initThemes();
-		if(Configure.THEME_STYLE == Configure.THEME_STYLE_NIGHT){
+		if(Configure.THEME_STYLE == Configure.THEME_STYLE_DARK){
 			currentThemeStyle = ThemeGrey;
 			this.setTheme(android.R.style.Theme_Holo);
-		}else{
+		}else if(Configure.THEME_STYLE == Configure.THEME_STYLE_GREEN){
+			currentThemeStyle = ThemeGreen;
+			this.setTheme(R.style.Theme_ABW);
+		}else {
 			currentThemeStyle = ThemeYellow;
 			this.setTheme(R.style.Theme_ABW);
 		}
 	}
 	private static StudyTheme ThemeYellow ;
 	private static StudyTheme ThemeGrey;
+	private static StudyTheme ThemeGreen;
 	class StudyTheme{
 		public int contentBlockBg;
 		public int ignoreTextColor;

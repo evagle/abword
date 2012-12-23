@@ -87,12 +87,15 @@ public class MainActivity extends Activity implements ActivityInterface {
 		});
 		theme.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
-				if(Configure.THEME_STYLE == Configure.THEME_STYLE_DAY){
-					Configure.THEME_STYLE = Configure.THEME_STYLE_NIGHT;
-					item.setTitle("T-NIGHT");
+				if(Configure.THEME_STYLE == Configure.THEME_STYLE_GREEN){
+					Configure.THEME_STYLE = Configure.THEME_STYLE_YELLOW;
+					item.setTitle("YELLOW");
+				}else if(Configure.THEME_STYLE == Configure.THEME_STYLE_YELLOW){
+					Configure.THEME_STYLE  = Configure.THEME_STYLE_DARK;
+					item.setTitle("DARK");
 				}else{
-					Configure.THEME_STYLE  = Configure.THEME_STYLE_DAY;
-					item.setTitle("T-DAY");
+					Configure.THEME_STYLE = Configure.THEME_STYLE_GREEN;
+					item.setTitle("GREEN");
 				}
 				return true;
 			}

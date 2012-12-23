@@ -19,6 +19,7 @@
     <color name="android_black">#FF000000</color>
     <color name="android_light_black">#FF1C1C1C</color>
 	<color name="android_green">#FFA4C639</color>
+	<color name="android_light_green">#FFA0B320</color>
 	<color name="android_dark_grey">#FF6E6E6E</color>
 	<color name="android_yellow">#FFFE9A2E</color>
 	<color name="android_light_yellow">#FFF5DA81</color>
