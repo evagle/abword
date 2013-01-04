@@ -27,10 +27,8 @@ public class StudyControler {
 	private Context context;
 	private static String CURRENT_UNIT_WORDS = "current_unit_words_";
 	private String dictName;
-	// private int unitId;
 	private WordDBHelper wordDBHelper;
 	private ClickStatsDBHelper clickStatsDBHelper;
-	private boolean CLOSED = false;
 	private HashMap<String, Integer> effectMap = new HashMap<String, Integer>() {
 		private static final long serialVersionUID = 1L;
 		{
@@ -56,9 +54,8 @@ public class StudyControler {
 	public void close() {
 		wordDBHelper.close();
 		clickStatsDBHelper.close();
-		CLOSED = false;
 	}
-
+	
 	public void loadCurrentUnit(boolean loadfromfile) {
 		List<String> list = null;
 		if (loadfromfile) {
@@ -68,34 +65,6 @@ public class StudyControler {
 		unit.init();
 		if (list == null || !unit.parseFromString(list))
 			unit.initWordsList();
-	}
-
-	public void updateIntervals() {
-		if (new Random().nextInt(100) < 20) {
-			new Thread(new Runnable() {
-				public void run() {
-					WordDBHelper helper = new WordDBHelper(unit.getDictName());
-					for (WordItem word : unit.getWords()) {
-						if (!CLOSED) {
-							WordItem w = helper.getWord(word.getWord());
-							if(w.getNextMemoDate()==null)
-								continue;
-							double interval = TimeHelper.getDiffDay(
-									w.getNextMemoDate(), new Date());
-							if (interval < 1)
-								w.setInterval(1d);
-							else
-								w.setInterval(interval);
-							word.setInterval(w.getInterval());
-							helper.update(w);
-						}else{
-							break;
-						}
-					}
-					helper.close();
-				}
-			}).start();
-		}
 	}
 
 	public void saveCurrentUnitToFile() {
@@ -139,7 +108,7 @@ public class StudyControler {
 			return current;
 		} else if (studyType.equals(STUDY_TYPE.LEARN_NEW)) {
 			if (unit.getNonMemodWords().size() > 0) {
-				WordItem current = unit.getNonMemodWords().get(0);
+				current = unit.getNonMemodWords().get(0);
 				current = wordDBHelper.getWord(current.getWord());
 				unit.getNonMemodWords().remove(0);
 				unit.getShowedWords().add(current);
@@ -149,7 +118,7 @@ public class StudyControler {
 				return null;
 		} else if (studyType.equals(STUDY_TYPE.REVIEW)) {
 			if (unit.getMemodWords().size() > 0) {
-				WordItem current = unit.getMemodWords().get(0);
+				current = unit.getMemodWords().get(0);
 				current = wordDBHelper.getWord(current.getWord());
 				unit.getMemodWords().remove(0);
 				unit.getShowedWords().add(current);
@@ -160,7 +129,14 @@ public class StudyControler {
 		}
 		return null;
 	}
-
+	public String  getLastNWords(int n){
+		String wordlst = "";
+		for(int i=Math.max(0, unit.getShowedWords().size()-1-n);i<=unit.getShowedWords().size()-2;i++)
+		{
+			wordlst+=unit.getShowedWords().get(i).getWord()+"\n";
+		}
+		return wordlst;
+	}
 	public void resetMemodList() {
 		unit.getMemodWords().addAll(unit.getShowedWords());
 		Collections.sort(unit.getMemodWords());
@@ -187,10 +163,12 @@ public class StudyControler {
 	public void finishMemoWord(WordItem w, Date startTime, double timeDelta,
 			String gradeStr) {
 		int grade = 0;
+		//update interval first
+		w.updateInterval();
+		
 		if (gradeStr != null && effectMap.containsKey(gradeStr)) {
 			grade = effectMap.get(gradeStr);
 		}
-
 		UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
 		WordDBHelper wordDBHelper = new WordDBHelper(unit.getDictName());
 		if (w.getIngnore() == 1) {

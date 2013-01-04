@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.souldak.util.ChineseJudger;
 import com.souldak.util.TimeHelper;
 
 import android.util.Log;
@@ -70,11 +71,6 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		if(w.sound!=null&&!w.sound.equals(""))
 			this.sound = w.sound;
 		this.paraphrases = w.paraphrases;
-//		for(HashMap<String,String> str:w.paraphrases){
-//			if(!this.paraphrases.contains(str)){
-//				this.paraphrases.add(str);
-//			}
-//		}
 		
 		for(String str:w.phrases){
 			if(!this.phrases.contains(str)){
@@ -82,11 +78,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 			}
 		}
 		this.sents = w.sents;
-//		for(HashMap<String,String> str:w.sents){
-//			if(!this.sents.contains(str)){
-//				this.sents.add(str);
-//			}
-//		}
+ 
 		
 	}
 	public void addMemoRecord(Date startTime,Double timeDelta,int grade){
@@ -128,7 +120,14 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		}
 		 
 	}
-	
+	public void updateInterval(){
+		if(nextMemoDate!=null){
+			interval = TimeHelper.getDiffDay(
+					nextMemoDate, new Date());
+			if (interval < 1)
+				interval = 1d;
+		}
+	}
 	public List<String> paraphrasesList(){
 		List<String> list = new ArrayList<String>();
 		for(HashMap<String, String> para : paraphrases){
@@ -137,7 +136,49 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		}
 		return list;
 	}
-	 
+	public String paraphrasesToString(){
+		StringBuilder builder = new StringBuilder();
+		for(HashMap<String, String> para : paraphrases){
+			//builder.append("pos#");
+			builder.append(para.get("pos")+"\n");
+			//builder.append("acc#");
+			builder.append(para.get("acc")+"\n");
+		}
+		return builder.toString();
+	}
+	public void updateParaphrases(String text){
+		String[] arr = text.split("\n");
+		List<String> list = new ArrayList<String>();
+		String tmp="";
+		for(int i = 0;i<arr.length;i++){
+			if(arr[i].equals("")){
+				continue;
+			}
+			if(ChineseJudger.isChinese(arr[i]) ){
+				tmp+=arr[i]+"\n";
+			}else{
+				if(!tmp.equals("")){
+					tmp= tmp.trim();
+					list.add(tmp);
+					tmp="";
+				}
+				list.add(arr[i]);
+			}
+		}
+		if(!tmp.equals("")){
+			list.add(tmp);
+		}
+		
+		List<HashMap<String, String>> paraList = new ArrayList<HashMap<String,String>>();
+		for(int i=0;i+1<list.size();i+=2){
+			HashMap<String, String> para = new HashMap<String, String>();
+			para.put("pos",	 list.get(i));
+			para.put("acc", list.get(i+1));
+			paraList.add(para);
+		}
+		this.paraphrases = paraList;
+		
+	}
 	@Override
 	public String toString() {
 		return "WordItem [id=" + id + ", word=" + word + ", dict=" + dict

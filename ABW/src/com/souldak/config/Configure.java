@@ -17,7 +17,7 @@ public class Configure {
 	public static final String THEME_STYLE_DARK="dark";
 	public static final String THEME_STYLE_YELLOW="yellow";
 	public static final String THEME_STYLE_GREEN="green";
-	public static String THEME_STYLE=THEME_STYLE_YELLOW;
+	public static String THEME_STYLE=THEME_STYLE_DAY;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

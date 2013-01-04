@@ -85,21 +85,23 @@ public class MainActivity extends Activity implements ActivityInterface {
 				return true;
 			}
 		});
+		
 		theme.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
-				if(Configure.THEME_STYLE == Configure.THEME_STYLE_GREEN){
-					Configure.THEME_STYLE = Configure.THEME_STYLE_YELLOW;
-					item.setTitle("YELLOW");
-				}else if(Configure.THEME_STYLE == Configure.THEME_STYLE_YELLOW){
-					Configure.THEME_STYLE  = Configure.THEME_STYLE_DARK;
-					item.setTitle("DARK");
+				if(Configure.THEME_STYLE == Configure.THEME_STYLE_DAY){
+					Configure.THEME_STYLE = Configure.THEME_STYLE_NIGHT;
+					item.setTitle("NIGHT");
 				}else{
-					Configure.THEME_STYLE = Configure.THEME_STYLE_GREEN;
-					item.setTitle("GREEN");
+					Configure.THEME_STYLE = Configure.THEME_STYLE_DAY;
+					item.setTitle("DAY");
 				}
 				return true;
 			}
 		});
+		if(Configure.THEME_STYLE == Configure.THEME_STYLE_DAY)
+			theme.setTitle("DAY");
+		else
+			theme.setTitle("NIGHT");
 		return true;
 	}
 	 
@@ -108,7 +110,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 		scrollView = (ABScrollView) findViewById(R.id.scroll_container);
 
 		dictManager = new DictManager(this);
-		
 		
 		initActionBar();
 	}

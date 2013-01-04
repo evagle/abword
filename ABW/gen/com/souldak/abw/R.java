@@ -14,19 +14,48 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int android_black=0x7f050001;
-        public static final int android_blue=0x7f050008;
-        public static final int android_dark_grey=0x7f050005;
-        public static final int android_green=0x7f050003;
-        public static final int android_light_black=0x7f050002;
-        public static final int android_light_green=0x7f050004;
-        public static final int android_light_yellow=0x7f050007;
+        public static final int android_black=0x7f050002;
+        public static final int android_blue=0x7f050009;
+        public static final int android_dark_grey=0x7f050006;
+        public static final int android_green=0x7f050004;
+        public static final int android_light_black=0x7f050003;
+        public static final int android_light_green=0x7f050005;
+        public static final int android_light_white=0x7f050001;
+        public static final int android_light_yellow=0x7f050008;
         public static final int android_white=0x7f050000;
-        public static final int android_yellow=0x7f050006;
-        public static final int background=0x7f05000b;
-        public static final int bg_yellow=0x7f05000c;
-        public static final int honeycombish_blue=0x7f050009;
-        public static final int soft_grey=0x7f05000a;
+        public static final int android_yellow=0x7f050007;
+        public static final int background=0x7f05000c;
+        public static final int bg_yellow=0x7f05000d;
+        /**  A really bright Holo shade of blue 
+         */
+        public static final int holo_blue_bright=0x7f050017;
+        /**  A dark Holo shade of blue 
+         */
+        public static final int holo_blue_dark=0x7f050011;
+        public static final int holo_blue_light=0x7f05000e;
+        /**  A dark Holo shade of green 
+         */
+        public static final int holo_green_dark=0x7f050012;
+        /**  A light Holo shade of green 
+         */
+        public static final int holo_green_light=0x7f05000f;
+        /**  A dark Holo shade of orange 
+         */
+        public static final int holo_orange_dark=0x7f050016;
+        /**  A light Holo shade of orange 
+         */
+        public static final int holo_orange_light=0x7f050015;
+        /**  A Holo shade of purple 
+         */
+        public static final int holo_purple=0x7f050014;
+        /**  A dark Holo shade of red 
+         */
+        public static final int holo_red_dark=0x7f050013;
+        /**  A light Holo shade of red 
+         */
+        public static final int holo_red_light=0x7f050010;
+        public static final int honeycombish_blue=0x7f05000a;
+        public static final int soft_grey=0x7f05000b;
     }
     public static final class dimen {
         public static final int frag_rounding_radius=0x7f060003;
@@ -92,39 +121,44 @@ public final class R {
         public static final int yellow_button=0x7f020035;
     }
     public static final class id {
-        public static final int adapter_load_dict_row_image=0x7f0a000a;
-        public static final int adapter_load_dict_row_load=0x7f0a000f;
-        public static final int adapter_load_dict_row_name=0x7f0a000b;
-        public static final int adapter_load_dict_row_num=0x7f0a000c;
-        public static final int adapter_load_dict_row_process=0x7f0a000e;
-        public static final int adapter_load_dict_row_row=0x7f0a0009;
-        public static final int adapter_load_dict_row_row1=0x7f0a000d;
-        public static final int box_view_lock_lock=0x7f0a0012;
-        public static final int box_view_lock_unit_num=0x7f0a0011;
-        public static final int box_view_lock_unit_text=0x7f0a0010;
-        public static final int box_view_phonogram=0x7f0a0014;
-        public static final int box_view_word=0x7f0a0013;
-        public static final int chart_dialog_chart=0x7f0a0016;
-        public static final int chart_dialog_main=0x7f0a0015;
-        public static final int chart_dialog_show_buttons=0x7f0a0017;
-        public static final int chart_dialog_show_process=0x7f0a0018;
-        public static final int chart_dialog_show_review_plan=0x7f0a0019;
+        public static final int adapter_load_dict_row_image=0x7f0a000d;
+        public static final int adapter_load_dict_row_load=0x7f0a0012;
+        public static final int adapter_load_dict_row_name=0x7f0a000e;
+        public static final int adapter_load_dict_row_num=0x7f0a000f;
+        public static final int adapter_load_dict_row_process=0x7f0a0011;
+        public static final int adapter_load_dict_row_row=0x7f0a000c;
+        public static final int adapter_load_dict_row_row1=0x7f0a0010;
+        public static final int box_view_lock_lock=0x7f0a0015;
+        public static final int box_view_lock_unit_num=0x7f0a0014;
+        public static final int box_view_lock_unit_text=0x7f0a0013;
+        public static final int box_view_phonogram=0x7f0a0017;
+        public static final int box_view_word=0x7f0a0016;
+        public static final int chart_dialog_chart=0x7f0a0019;
+        public static final int chart_dialog_main=0x7f0a0018;
+        public static final int chart_dialog_show_buttons=0x7f0a001a;
+        public static final int chart_dialog_show_process=0x7f0a001b;
+        public static final int chart_dialog_show_review_plan=0x7f0a001c;
+        public static final int edit_dialog_edittext=0x7f0a001d;
         public static final int fragment_container=0x7f0a0002;
         public static final int load_dict_list_dicts=0x7f0a0000;
-        public static final int menu_load_dicts=0x7f0a001d;
-        public static final int menu_settings=0x7f0a001f;
-        public static final int menu_show_chart=0x7f0a0020;
-        public static final int menu_stats=0x7f0a001c;
-        public static final int menu_theme=0x7f0a001e;
+        public static final int menu_edit=0x7f0a0025;
+        public static final int menu_load_dicts=0x7f0a0021;
+        public static final int menu_settings=0x7f0a0023;
+        public static final int menu_show_chart=0x7f0a0024;
+        public static final int menu_stats=0x7f0a0020;
+        public static final int menu_theme=0x7f0a0022;
         public static final int scroll_container=0x7f0a0001;
-        public static final int study_buttons=0x7f0a0008;
+        public static final int study_buttons=0x7f0a000b;
         public static final int study_contentblock=0x7f0a0003;
+        public static final int study_edit_phrases=0x7f0a0009;
         public static final int study_phonogram=0x7f0a0006;
-        public static final int study_phrases=0x7f0a0007;
+        public static final int study_phrases=0x7f0a0008;
+        public static final int study_progress=0x7f0a000a;
+        public static final int study_split_line=0x7f0a0007;
         public static final int study_tv_ignore=0x7f0a0004;
         public static final int study_word=0x7f0a0005;
-        public static final int word_fragment_phonogram=0x7f0a001b;
-        public static final int word_fragment_word=0x7f0a001a;
+        public static final int word_fragment_phonogram=0x7f0a001f;
+        public static final int word_fragment_word=0x7f0a001e;
     }
     public static final class layout {
         public static final int activity_load_dict=0x7f030000;
@@ -134,7 +168,8 @@ public final class R {
         public static final int box_view_cur_layout=0x7f030004;
         public static final int box_view_lock_layout=0x7f030005;
         public static final int chart_dialog=0x7f030006;
-        public static final int word_fragment_layout=0x7f030007;
+        public static final int edit_dialog_layout=0x7f030007;
+        public static final int word_fragment_layout=0x7f030008;
     }
     public static final class menu {
         public static final int activity_main=0x7f090000;
@@ -142,15 +177,16 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f070000;
-        public static final int dict_load_stat_loaded=0x7f070007;
-        public static final int dict_load_stat_unload=0x7f070008;
+        public static final int dict_load_stat_loaded=0x7f070008;
+        public static final int dict_load_stat_unload=0x7f070009;
         public static final int hello_world=0x7f070001;
+        public static final int menu_edit=0x7f070004;
         public static final int menu_load_dicts=0x7f070003;
         public static final int menu_settings=0x7f070002;
-        public static final int menu_show_chart=0x7f070006;
-        public static final int menu_stats=0x7f070004;
-        public static final int menu_theme=0x7f070005;
-        public static final int title_activity_main=0x7f070009;
+        public static final int menu_show_chart=0x7f070007;
+        public static final int menu_stats=0x7f070005;
+        public static final int menu_theme=0x7f070006;
+        public static final int title_activity_main=0x7f07000a;
     }
     public static final class style {
         public static final int AppTheme=0x7f080000;

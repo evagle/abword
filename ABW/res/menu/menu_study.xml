@@ -10,7 +10,10 @@
         android:title="@string/menu_stats"
         android:orderInCategory="98"
         android:showAsAction="never" />
- 
+ 	<item android:id="@+id/menu_edit"
+        android:title="@string/menu_edit"
+        android:orderInCategory="99"
+        android:showAsAction="never" />
      <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:orderInCategory="100"
