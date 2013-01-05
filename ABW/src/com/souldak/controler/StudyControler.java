@@ -109,10 +109,11 @@ public class StudyControler {
 	}
 
 	public WordItem next(STUDY_TYPE studyType) {
-		if (showedPosition + 1 < unit.getShowedWords().size()) {
-			current = unit.getShowedWords().get(showedPosition++);
-			return current;
-		} else if (studyType.equals(STUDY_TYPE.LEARN_NEW)) {
+//		if (showedPosition + 1 < unit.getShowedWords().size()) {
+//			current = unit.getShowedWords().get(showedPosition++);
+//			return current;
+//		} else 
+		if (studyType.equals(STUDY_TYPE.LEARN_NEW)) {
 			if (unit.getNonMemodWords().size() > 0) {
 				current = unit.getNonMemodWords().get(0);
 				current = wordDBHelper.getWord(current.getWord());

@@ -108,6 +108,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		findViews();
 		initCompenents();
 		initListeners();
+		showNextWord();
 		onStateChange();
 		initButtons();
 		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
@@ -120,15 +121,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		Gson g = new Gson();
-		Unit lastUnit = controler.getUnit();
-		if (lastUnit.getShowedWords().size() > 0) {
-			WordItem lastW = lastUnit.getShowedWords().get(
-					lastUnit.getShowedWords().size() - 1);
-			lastUnit.getShowedWords().remove(
-					lastUnit.getShowedWords().size() - 1);
-			lastUnit.getMemodWords().add(0, lastW);
-		}
-		String unitStr = g.toJson(lastUnit);
+		String unitStr = g.toJson(controler.getUnit());
 		outState.putString("unit", unitStr);
 		outState.putInt("showdPosition", controler.getShowedPosition());
 	}
@@ -362,7 +355,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 		tvWord.setTypeface(dejaVuSans);
 		tvPhonogram.setTypeface(dejaVuSans);
-		showNextWord();
+		
 
 	}
 
@@ -504,6 +497,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 					Toast.makeText(this, "新单词已经背完,进入复习模式", Toast.LENGTH_SHORT)
 							.show();
 					studyType = STUDY_TYPE.REVIEW;
+					controler.resetMemodList();
 					showNextWord();
 				} else if (studyType == STUDY_TYPE.REVIEW) {
 
