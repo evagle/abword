@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.souldak.config.Configure;
 import com.souldak.config.ConstantValue.STUDY_TYPE;
@@ -37,7 +38,14 @@ public class StudyControler {
 			put("BAD", 0);
 		}
 	};
-
+	public StudyControler(Context context, String dictName, Unit unit) {
+		this.context = context;
+		this.unit = unit;
+		showedPosition = 0;
+		this.dictName = dictName;
+		wordDBHelper = new WordDBHelper(dictName);
+		clickStatsDBHelper = new ClickStatsDBHelper();
+	}
 	public StudyControler(Context context, String dictName, int unitId) {
 		this.context = context;
 		this.unit = new Unit();
@@ -47,6 +55,11 @@ public class StudyControler {
 		showedPosition = 0;
 		this.dictName = dictName;
 		// this.unitId = unitId;
+		wordDBHelper = new WordDBHelper(dictName);
+		clickStatsDBHelper = new ClickStatsDBHelper();
+	}
+	public void init(Context context){
+		this.context = context;
 		wordDBHelper = new WordDBHelper(dictName);
 		clickStatsDBHelper = new ClickStatsDBHelper();
 	}
@@ -161,16 +174,14 @@ public class StudyControler {
 	}
 
 	public void finishMemoWord(WordItem w, Date startTime, double timeDelta,
-			String gradeStr) {
-		int grade = 0;
-		//update interval first
-		w.updateInterval();
+			final String gradeStr) {
+		Date s = new Date();
 		
+		int grade = 0;
+		w.updateInterval();
 		if (gradeStr != null && effectMap.containsKey(gradeStr)) {
 			grade = effectMap.get(gradeStr);
 		}
-		UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
-		WordDBHelper wordDBHelper = new WordDBHelper(unit.getDictName());
 		if (w.getIngnore() == 1) {
 			unit.setIgnoreCount(unit.getIgnoreCount() + 1);
 			unit.removeIgnoredWord(w);
@@ -178,16 +189,32 @@ public class StudyControler {
 			unit.addMemodCount();
 		}
 		w.addMemoRecord(startTime, timeDelta, grade);
-		wordDBHelper.update(w);
-		unitDBHelper.update(unit);
-		unitDBHelper.close();
-		wordDBHelper.close();
+		final WordItem fw=w;
+		new Thread(new Runnable() {
+			public void run() {
+				UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
+				WordDBHelper wordDBHelper = new WordDBHelper(unit.getDictName());
+				wordDBHelper.update(fw);
+				unitDBHelper.update(unit);
+				unitDBHelper.close();
+				wordDBHelper.close();
+			}
+		}).start();
+		
 		if (w.getIngnore() != 1) {
-			updateClickStats(TimeHelper.dateToString(new Date()),
-					effectMap.get(gradeStr));
-			updateClickStats(ClickStatsDBHelper.SumRecordDate,
-					effectMap.get(gradeStr));
+			new Thread(new Runnable() {
+				public void run() {
+					updateClickStats(TimeHelper.dateToString(new Date()),
+							effectMap.get(gradeStr));
+					updateClickStats(ClickStatsDBHelper.SumRecordDate,
+							effectMap.get(gradeStr));
+				}
+			}).start();
+			
+			
 		}
+		Date e = new Date();
+		Log.d("finishMemoWord ","Cost(ms): "+TimeHelper.getDiffMilliSec(e, s));
 	}
 
 	private void updateClickStats(String date, int grade) {
@@ -224,5 +251,45 @@ public class StudyControler {
 
 	public void setUnit(Unit unit) {
 		this.unit = unit;
+	}
+
+	public int getShowedPosition() {
+		return showedPosition;
+	}
+
+	public void setShowedPosition(int showedPosition) {
+		this.showedPosition = showedPosition;
+	}
+
+	public WordItem getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(WordItem current) {
+		this.current = current;
+	}
+
+	public static String getCURRENT_UNIT_WORDS() {
+		return CURRENT_UNIT_WORDS;
+	}
+
+	public static void setCURRENT_UNIT_WORDS(String cURRENT_UNIT_WORDS) {
+		CURRENT_UNIT_WORDS = cURRENT_UNIT_WORDS;
+	}
+
+	public String getDictName() {
+		return dictName;
+	}
+
+	public void setDictName(String dictName) {
+		this.dictName = dictName;
+	}
+
+	public HashMap<String, Integer> getEffectMap() {
+		return effectMap;
+	}
+
+	public void setEffectMap(HashMap<String, Integer> effectMap) {
+		this.effectMap = effectMap;
 	}
 }

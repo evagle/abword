@@ -11,12 +11,14 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,10 +31,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.souldak.config.Configure;
 import com.souldak.config.ConstantValue.STUDY_STATE;
 import com.souldak.config.ConstantValue.STUDY_TYPE;
 import com.souldak.controler.StudyControler;
+import com.souldak.model.Unit;
 import com.souldak.model.WordItem;
 import com.souldak.tts.TTS;
 import com.souldak.util.SharePreferenceHelper;
@@ -45,7 +49,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private LinearLayout phrasesBlock;
 	private LinearLayout buttonsBlock;
 	private LinearLayout splitLine;
-	private ProgressBar progressBar ;
+	private ProgressBar progressBar;
 	private TextView tvWord;
 	private TextView tvPhonogram;
 	private TextView tvIgnore;
@@ -64,12 +68,14 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private Date startDate;
 	private StudyTheme currentThemeStyle;
 	private TTS tts;
+	private long lastExitTime=0;
 	public static String STUDY_LAST_DICT = "study_last_dict";
 	public static String STUDY_LAST_UNIT = "study_last_unit";
 
 	public void onCreate(Bundle savedInstanceState) {
 		setTheme();
 		super.onCreate(savedInstanceState);
+
 		setContentView(R.layout.activity_study);
 
 		String dictName = getIntent().getExtras().getString("dictName");
@@ -83,16 +89,17 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		studyState = STUDY_STATE.SHOW_ANSWER;
 		tts = new TTS(this);
 
-		controler = new StudyControler(this, dictName, unitId);
-		Object lastDict = SharePreferenceHelper.getPreferences(STUDY_LAST_DICT,
-				this);
-		Object lastUnit = SharePreferenceHelper.getPreferences(STUDY_LAST_UNIT,
-				this);
-		if (lastDict != null && lastUnit != null
-				&& dictName.equals((String) lastDict)
-				&& (unitId + "").equals(lastUnit)) {
-			controler.loadCurrentUnit(true);
+		if (savedInstanceState != null
+				&& savedInstanceState.containsKey("unit")) {
+			Log.d("Load from savedInstanceState", "savedInstanceState");
+			Gson g = new Gson();
+			Unit lastUnit = g.fromJson(savedInstanceState.getString("unit"),
+					Unit.class);
+			controler = new StudyControler(this, dictName, lastUnit);
+			controler.setShowedPosition(savedInstanceState
+					.getInt("showdPosition"));
 		} else {
+			controler = new StudyControler(this, dictName, unitId);
 			controler.loadCurrentUnit(true);
 		}
 
@@ -110,6 +117,68 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 	}
 
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Gson g = new Gson();
+		Unit lastUnit = controler.getUnit();
+		if (lastUnit.getShowedWords().size() > 0) {
+			WordItem lastW = lastUnit.getShowedWords().get(
+					lastUnit.getShowedWords().size() - 1);
+			lastUnit.getShowedWords().remove(
+					lastUnit.getShowedWords().size() - 1);
+			lastUnit.getMemodWords().add(0, lastW);
+		}
+		String unitStr = g.toJson(lastUnit);
+		outState.putString("unit", unitStr);
+		outState.putInt("showdPosition", controler.getShowedPosition());
+	}
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){  
+		if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+			if(System.currentTimeMillis() - lastExitTime > 2000){
+				Toast.makeText(getApplicationContext(), "再按一次返回主界面",Toast.LENGTH_SHORT).show();                                  
+				lastExitTime = System.currentTimeMillis();
+			}else{
+				onPause();
+				finish();
+				System.exit(0);
+			}
+			return true;  
+		}
+		return super.onKeyDown(keyCode, event);  
+	}
+	
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		controler.saveCurrentUnitToFile();
+		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
+				.getUnit().getDictName(), this);
+		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
+				.getUnit().getUnitId() + "", this);
+		controler.close();
+		tts.close();
+	}
+
+	@Override
+	public void onPause() {
+		super.onPause();
+		controler.saveCurrentUnitToFile();
+		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
+				.getUnit().getDictName(), this);
+		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
+				.getUnit().getUnitId() + "", this);
+	}
+
+	@Override
+	public Object onRetainNonConfigurationInstance() {
+		return this;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+	}
 	@SuppressWarnings("unused")
 	@SuppressLint("NewApi")
 	@Override
@@ -142,18 +211,18 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 			public boolean onMenuItemClick(MenuItem item) {
 				List<String> phrases = current.paraphrasesList();
-				if (current != null && current.getWord() != null  ) {
-					if(current.getParaphrases().size() == 0)
+				if (current != null && current.getWord() != null) {
+					if (current.getParaphrases().size() == 0)
 						return false;
 					View view = LayoutInflater.from(StudyActivity.this)
 							.inflate(R.layout.edit_dialog_layout, null);
 					final EditText et = (EditText) view
 							.findViewById(R.id.edit_dialog_edittext);
-					 
+
 					et.setText(current.paraphrasesToString());
 					AlertDialog.Builder builder = new AlertDialog.Builder(
 							StudyActivity.this);
-					builder.setTitle("EDIT: "+current.getWord());
+					builder.setTitle("EDIT: " + current.getWord());
 					builder.setView(view);
 					builder.setPositiveButton("Ok",
 							new DialogInterface.OnClickListener() {
@@ -162,7 +231,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 									String edittedText = et.getText()
 											.toString();
 									current.updateParaphrases(edittedText);
-									etPrases.setText(current.paraphrasesToString());
+									etPrases.setText(current
+											.paraphrasesToString());
 									arg0.dismiss();
 								}
 							});
@@ -186,33 +256,9 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				ActionBar.DISPLAY_HOME_AS_UP);
 		return true;
 	}
-
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		controler.saveCurrentUnitToFile();
-		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
-				.getUnit().getDictName(), this);
-		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
-				.getUnit().getUnitId() + "", this);
-		controler.close();
-		tts.close();
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		controler.saveCurrentUnitToFile();
-		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
-				.getUnit().getDictName(), this);
-		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
-				.getUnit().getUnitId() + "", this);
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		// controler.loadCurrentUnit(true);
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
 	}
 
 	@Override
@@ -229,33 +275,35 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	}
 
 	public void initThemes() {
-//		ThemeYellow = new StudyTheme();
-//		ThemeYellow.contentBlockBg = R.color.android_light_yellow;
-//		ThemeYellow.buttonStyle = R.drawable.grey_button;
-//		ThemeYellow.ignoreTextColor = R.color.soft_grey;
-//		ThemeYellow.wordTextColor = R.color.android_black;
-//		ThemeYellow.phonogramTextColor = R.color.android_dark_grey;
-//		ThemeYellow.phrasesTextColor = R.color.android_black;
-//		ThemeYellow.horizontalSplitLineColor = android.R.color.holo_blue_light;
-//		
-//		ThemeGrey = new StudyTheme();
-//		ThemeGrey.contentBlockBg = R.color.android_light_black;
-//		ThemeGrey.buttonStyle = R.drawable.grey_button;
-//		ThemeGrey.ignoreTextColor = R.color.android_light_white;
-//		ThemeGrey.wordTextColor =  R.color.android_light_white;
-//		ThemeGrey.phonogramTextColor = R.color.android_light_white;
-//		ThemeGrey.phrasesTextColor = R.color.android_light_white;
-//		ThemeGrey.horizontalSplitLineColor = R.color.android_light_green;
-//
-//		ThemeGreen = new StudyTheme();
-//		ThemeGreen.contentBlockBg = R.color.android_light_green;
-//		ThemeGreen.buttonStyle = R.drawable.green_button;
-//		ThemeGreen.ignoreTextColor = R.color.soft_grey;
-//		ThemeGreen.wordTextColor = R.color.android_black;
-//		ThemeGreen.phonogramTextColor = R.color.android_dark_grey;
-//		ThemeGreen.phrasesTextColor = R.color.android_black;
-//		ThemeGreen.horizontalSplitLineColor = android.R.color.holo_blue_light;
-		
+		// ThemeYellow = new StudyTheme();
+		// ThemeYellow.contentBlockBg = R.color.android_light_yellow;
+		// ThemeYellow.buttonStyle = R.drawable.grey_button;
+		// ThemeYellow.ignoreTextColor = R.color.soft_grey;
+		// ThemeYellow.wordTextColor = R.color.android_black;
+		// ThemeYellow.phonogramTextColor = R.color.android_dark_grey;
+		// ThemeYellow.phrasesTextColor = R.color.android_black;
+		// ThemeYellow.horizontalSplitLineColor =
+		// android.R.color.holo_blue_light;
+		//
+		// ThemeGrey = new StudyTheme();
+		// ThemeGrey.contentBlockBg = R.color.android_light_black;
+		// ThemeGrey.buttonStyle = R.drawable.grey_button;
+		// ThemeGrey.ignoreTextColor = R.color.android_light_white;
+		// ThemeGrey.wordTextColor = R.color.android_light_white;
+		// ThemeGrey.phonogramTextColor = R.color.android_light_white;
+		// ThemeGrey.phrasesTextColor = R.color.android_light_white;
+		// ThemeGrey.horizontalSplitLineColor = R.color.android_light_green;
+		//
+		// ThemeGreen = new StudyTheme();
+		// ThemeGreen.contentBlockBg = R.color.android_light_green;
+		// ThemeGreen.buttonStyle = R.drawable.green_button;
+		// ThemeGreen.ignoreTextColor = R.color.soft_grey;
+		// ThemeGreen.wordTextColor = R.color.android_black;
+		// ThemeGreen.phonogramTextColor = R.color.android_dark_grey;
+		// ThemeGreen.phrasesTextColor = R.color.android_black;
+		// ThemeGreen.horizontalSplitLineColor =
+		// android.R.color.holo_blue_light;
+
 		ThemeDay = new StudyTheme();
 		ThemeDay.contentBlockBg = R.color.android_light_yellow;
 		ThemeDay.buttonStyle = R.drawable.grey_button;
@@ -265,17 +313,17 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		ThemeDay.phrasesTextColor = R.color.android_black;
 		ThemeDay.horizontalSplitLineColor = android.R.color.holo_blue_light;
 		ThemeDay.verticleSplitLineColor = R.color.android_light_white;
-		
+
 		ThemeNight = new StudyTheme();
 		ThemeNight.contentBlockBg = R.color.android_light_black;
 		ThemeNight.buttonStyle = R.drawable.grey_button;
 		ThemeNight.ignoreTextColor = R.color.android_light_white;
-		ThemeNight.wordTextColor =  R.color.android_light_white;
+		ThemeNight.wordTextColor = R.color.android_light_white;
 		ThemeNight.phonogramTextColor = R.color.android_light_white;
 		ThemeNight.phrasesTextColor = R.color.android_light_white;
 		ThemeNight.horizontalSplitLineColor = R.color.android_light_green;
 		ThemeNight.verticleSplitLineColor = R.color.android_dark_grey;
-		
+
 		currentThemeStyle = ThemeDay;
 	}
 
@@ -303,16 +351,16 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		dejaVuSans = Typeface.createFromAsset(getAssets(),
 				"fonts/DejaVuSans.ttf");
 
-//		GradientDrawable background = (GradientDrawable) getResources()
-//				.getDrawable(R.drawable.rounded_rect);
-//		background.setColor(getResources().getColor(
-//				currentThemeStyle.contentBlockBg));
-//		background.setAlpha(225);
-//		background.setCornerRadius(4);
-//		contentBlock.setBackground(background);
-		
+		// GradientDrawable background = (GradientDrawable) getResources()
+		// .getDrawable(R.drawable.rounded_rect);
+		// background.setColor(getResources().getColor(
+		// currentThemeStyle.contentBlockBg));
+		// background.setAlpha(225);
+		// background.setCornerRadius(4);
+		// contentBlock.setBackground(background);
+
 		LayoutParams params = new LayoutParams(screenWidth - marginPixels,
-				screenHeight - buttonHeight  - marginPixels * 4 + 40);
+				screenHeight - buttonHeight - marginPixels * 4 + 40);
 		params.setMargins(marginPixels / 2, marginPixels / 2, marginPixels / 2,
 				marginPixels / 4);
 		contentBlock.setLayoutParams(params);
@@ -367,7 +415,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 												.setDuration(400).start();
 										showNextWord();
 										onStateChange();
-										removePhrasesViews();
+										removePhrasesViews(false);
 									}
 								})
 						.setNegativeButton("取消",
@@ -385,14 +433,14 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			}
 		});
 		tvWord.setOnClickListener(new View.OnClickListener() {
-			
+
 			public void onClick(View v) {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						StudyActivity.this);
 				builder.setTitle("Last 3 words");
 				builder.setMessage(controler.getLastNWords(3));
 				AlertDialog dialog = builder.create();
-				dialog.show();				
+				dialog.show();
 			}
 		});
 	}
@@ -401,16 +449,17 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		if (studyState.equals(STUDY_STATE.LEARNING)) {
 			studyState = STUDY_STATE.SHOW_ANSWER;
 			setProgress();
-//			changeButtons(STUDY_STATE.SHOW_ANSWER);
+			// changeButtons(STUDY_STATE.SHOW_ANSWER);
 
 		} else if (studyState.equals(STUDY_STATE.SHOW_ANSWER)) {
 			studyState = STUDY_STATE.LEARNING;
 			setProgress();
-//			changeButtons(STUDY_STATE.LEARNING);
+			// changeButtons(STUDY_STATE.LEARNING);
 		}
 	}
-	public void changeStyle(){
-		current = controler.next(studyType);
+
+	public void changeStyle() {
+
 		startDate = new Date();
 		tvWord.setTextColor(getResources().getColor(
 				currentThemeStyle.wordTextColor));
@@ -421,8 +470,10 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		splitLine.setBackgroundColor(getResources().getColor(
 				currentThemeStyle.horizontalSplitLineColor));
 	}
+
 	@SuppressLint("NewApi")
 	public void showNextWord() {
+		current = controler.next(studyType);
 		reciteCount++;
 		changeStyle();
 		if (current != null) {
@@ -499,17 +550,18 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			}
 
 		}
-		if(reciteCount% RECITE_PERIOD==0){
+		if (reciteCount % RECITE_PERIOD == 0) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					StudyActivity.this);
 			builder.setTitle("REVIEW");
 			builder.setMessage(controler.getLastNWords(RECITE_PERIOD));
 			AlertDialog dialog = builder.create();
-			dialog.show(); 
+			dialog.show();
 		}
 	}
-	public void setProgress(){
-		
+
+	public void setProgress() {
+
 		progressBar.setProgress(controler.getProgress(studyType));
 		if (studyType == STUDY_TYPE.REVIEW) {
 			progressBar.setProgressDrawable(getResources().getDrawable(
@@ -519,26 +571,29 @@ public class StudyActivity extends Activity implements ActivityInterface {
 					R.drawable.progressbar_blue));
 		}
 	}
+
 	public void initButtons() {
 		setProgress();
-		
+
 		buttonsBlock.removeAllViews();
 		buttonsBlock.addView(getButton("GOOD", R.color.android_green,
-				(screenWidth - marginPixels ) / 3, buttonHeight, 0, 0));
+				(screenWidth - marginPixels) / 3, buttonHeight, 0, 0));
 		buttonsBlock.addView(getSpliteBar());
 		buttonsBlock.addView(getButton("PASS", R.color.android_green,
-				(screenWidth - marginPixels ) / 3, buttonHeight, 0, 0));
+				(screenWidth - marginPixels) / 3, buttonHeight, 0, 0));
 		buttonsBlock.addView(getSpliteBar());
 		buttonsBlock.addView(getButton("BAD", R.color.android_green,
-				(screenWidth - marginPixels  ) / 3, buttonHeight, 0, 0));
- 
+				(screenWidth - marginPixels) / 3, buttonHeight, 0, 0));
+
 	}
-	public LinearLayout getSpliteBar (){
+
+	public LinearLayout getSpliteBar() {
 		LinearLayout spliter = new LinearLayout(this);
-		LayoutParams parms =new LayoutParams(2,buttonHeight-4);
+		LayoutParams parms = new LayoutParams(2, buttonHeight - 4);
 		parms.setMargins(2, 2, 2, 2);
 		spliter.setLayoutParams(parms);
-		spliter.setBackgroundColor(getResources().getColor(currentThemeStyle.verticleSplitLineColor));
+		spliter.setBackgroundColor(getResources().getColor(
+				currentThemeStyle.verticleSplitLineColor));
 		return spliter;
 	}
 
@@ -553,28 +608,30 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		if (etPrases.getVisibility() == View.GONE) {
 			showPhrasesViews();
 		} else {
-			removePhrasesViews();
-			
+			removePhrasesViews(true);
+
 		}
 	}
 
 	@SuppressLint("NewApi")
-	public void removePhrasesViews() {
-		ObjectAnimator alpha = ObjectAnimator.ofFloat(phrasesBlock, "alpha",
-				1f, 0f);
-		alpha.setDuration(300);
-		alpha.start();
-		try {
-			Thread.sleep(150);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+	public void removePhrasesViews(boolean needsAnimator) {
+		if (needsAnimator) {
+			ObjectAnimator alpha = ObjectAnimator.ofFloat(phrasesBlock,
+					"alpha", 1f, 0f);
+			alpha.setDuration(300);
+			alpha.start();
+			try {
+				Thread.sleep(150);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		etPrases.setVisibility(View.GONE);
 	}
 
 	@SuppressLint("NewApi")
 	public void showPhrasesViews() {
-//		phrasesBlock.removeAllViews();
+		// phrasesBlock.removeAllViews();
 		etPrases.setText(current.paraphrasesToString());
 		etPrases.setTypeface(dejaVuSans);
 		etPrases.setTextSize(20);
@@ -586,7 +643,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				togglePhrasesViews();
 			}
 		});
- 
+
 		ObjectAnimator alpha = ObjectAnimator.ofFloat(phrasesBlock, "alpha",
 				0f, 1f);
 		alpha.setDuration(300);
@@ -602,7 +659,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		background.setAlpha(225);
 		button.setText(text);
 		button.setBackground(background);
-//		button.setBackgroundColor(Color.TRANSPARENT);
+		// button.setBackgroundColor(Color.TRANSPARENT);
 		LayoutParams lp = new LayoutParams(width, height);
 		lp.setMargins(marginLeft, 0, marginRight, 0);
 		button.setLayoutParams(lp);
@@ -616,9 +673,10 @@ public class StudyActivity extends Activity implements ActivityInterface {
 						.setDuration(400).start();
 				ObjectAnimator.ofFloat(contentBlock, "rotationY", 180, 360)
 						.setDuration(400).start();
+
 				showNextWord();
 				onStateChange();
-				removePhrasesViews();
+				removePhrasesViews(false);
 			}
 		});
 		return button;

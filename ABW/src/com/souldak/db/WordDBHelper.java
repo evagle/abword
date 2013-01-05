@@ -152,7 +152,6 @@ public class WordDBHelper {
 			}
 			ContentValues values = wordItemToContentValues(word);
 			boolean result=baseDBHelper.update(values, WORD+"=\""+word.getWord()+"\"", null);
-			WordItem out=this.getWord(word.getWord());
 			if(!result){
 				Date e = new Date();
 				Log.e("WordDBHelper","updateWord failed COST= "+ TimeHelper.getDiffMilliSec(e, s));
