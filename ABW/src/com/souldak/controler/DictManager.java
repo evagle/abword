@@ -8,7 +8,6 @@ import java.util.List;
 import android.content.Context;
 
 import com.google.gson.Gson;
-import com.souldak.model.DictOld;
 import com.souldak.util.SharePreferenceHelper;
 
 

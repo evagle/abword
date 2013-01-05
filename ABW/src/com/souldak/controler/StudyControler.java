@@ -24,7 +24,6 @@ public class StudyControler {
 	private Unit unit;
 	private int showedPosition;
 	private WordItem current;
-	@SuppressWarnings("unused")
 	private Context context;
 	private static String CURRENT_UNIT_WORDS = "current_unit_words_";
 	private String dictName;
@@ -38,14 +37,7 @@ public class StudyControler {
 			put("BAD", 0);
 		}
 	};
-	public StudyControler(Context context, String dictName, Unit unit) {
-		this.context = context;
-		this.unit = unit;
-		showedPosition = 0;
-		this.dictName = dictName;
-		wordDBHelper = new WordDBHelper(dictName);
-		clickStatsDBHelper = new ClickStatsDBHelper();
-	}
+	
 	public StudyControler(Context context, String dictName, int unitId) {
 		this.context = context;
 		this.unit = new Unit();
@@ -54,16 +46,17 @@ public class StudyControler {
 		unitDBHelper.close();
 		showedPosition = 0;
 		this.dictName = dictName;
-		// this.unitId = unitId;
 		wordDBHelper = new WordDBHelper(dictName);
 		clickStatsDBHelper = new ClickStatsDBHelper();
 	}
-	public void init(Context context){
+	public StudyControler(Context context, String dictName, Unit unit) {
 		this.context = context;
+		this.unit = unit;
+		showedPosition = 0;
+		this.dictName = dictName;
 		wordDBHelper = new WordDBHelper(dictName);
 		clickStatsDBHelper = new ClickStatsDBHelper();
 	}
-
 	public void close() {
 		wordDBHelper.close();
 		clickStatsDBHelper.close();
@@ -237,14 +230,6 @@ public class StudyControler {
 			clickStatsDBHelper.update(item);
 	}
 
-	public WordItem getCurrentWord() {
-		return current;
-	}
-
-	public void setCurrentWord(WordItem current) {
-		this.current = current;
-	}
-
 	public Unit getUnit() {
 		return unit;
 	}
@@ -260,36 +245,5 @@ public class StudyControler {
 	public void setShowedPosition(int showedPosition) {
 		this.showedPosition = showedPosition;
 	}
-
-	public WordItem getCurrent() {
-		return current;
-	}
-
-	public void setCurrent(WordItem current) {
-		this.current = current;
-	}
-
-	public static String getCURRENT_UNIT_WORDS() {
-		return CURRENT_UNIT_WORDS;
-	}
-
-	public static void setCURRENT_UNIT_WORDS(String cURRENT_UNIT_WORDS) {
-		CURRENT_UNIT_WORDS = cURRENT_UNIT_WORDS;
-	}
-
-	public String getDictName() {
-		return dictName;
-	}
-
-	public void setDictName(String dictName) {
-		this.dictName = dictName;
-	}
-
-	public HashMap<String, Integer> getEffectMap() {
-		return effectMap;
-	}
-
-	public void setEffectMap(HashMap<String, Integer> effectMap) {
-		this.effectMap = effectMap;
-	}
+	 
 }

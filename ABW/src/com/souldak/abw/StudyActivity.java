@@ -169,12 +169,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
 				.getUnit().getUnitId() + "", this);
 	}
-
-	@Override
-	public Object onRetainNonConfigurationInstance() {
-		return this;
-	}
-
+ 
 	@Override
 	public void onResume() {
 		super.onResume();
