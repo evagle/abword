@@ -38,13 +38,15 @@ import com.souldak.view.BoxView.BOX_TYPE;
 public class MainActivity extends Activity implements ActivityInterface {
 	private ActionBar actionBar;
 	private DictManager dictManager;
-//	private Dict currentDict;
+	// private Dict currentDict;
 	private ArrayAdapter actionAdapter;
 	private List<String> dictNameList;
 	private Dict selectedDict;
 	private WordDBHelper wordDBHelper;
 	private ABScrollView scrollView;
 	public static String LAST_DICT = "last_dict";
+	public static final String SAVED_THEME_STYLE = "saved_theme_style";
+
 	@SuppressLint("NewApi")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class MainActivity extends Activity implements ActivityInterface {
 		setContentView(R.layout.activity_main);
 		initCompenents();
 		initListeners();
-		
+
 	}
 
 	@SuppressLint("NewApi")
@@ -78,39 +80,51 @@ public class MainActivity extends Activity implements ActivityInterface {
 						return true;
 					}
 				});
-		showStats.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-			public boolean onMenuItemClick(MenuItem item) {
-				ChartDialog chartDialog=new ChartDialog(MainActivity.this, R.style.chart_dialog );
-				chartDialog.show();
-				return true;
-			}
-		});
-		
+		showStats
+				.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+					public boolean onMenuItemClick(MenuItem item) {
+						ChartDialog chartDialog = new ChartDialog(
+								MainActivity.this, R.style.chart_dialog);
+						chartDialog.show();
+						return true;
+					}
+				});
+
 		theme.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
-				if(Configure.THEME_STYLE == Configure.THEME_STYLE_DAY){
+				// Object lastTheme =
+				// SharePreferenceHelper.getPreferences(SAVED_THEME_STYLE,
+				// MainActivity.this);
+
+				if (Configure.THEME_STYLE.equals(Configure.THEME_STYLE_DAY)) {
 					Configure.THEME_STYLE = Configure.THEME_STYLE_NIGHT;
+					SharePreferenceHelper.savePreferences(SAVED_THEME_STYLE, Configure.THEME_STYLE, MainActivity.this);
 					item.setTitle("NIGHT");
-				}else{
+				} else {
 					Configure.THEME_STYLE = Configure.THEME_STYLE_DAY;
+					SharePreferenceHelper.savePreferences(SAVED_THEME_STYLE, Configure.THEME_STYLE, MainActivity.this);
 					item.setTitle("DAY");
 				}
+
 				return true;
 			}
 		});
-		if(Configure.THEME_STYLE == Configure.THEME_STYLE_DAY)
+		Object lastTheme = SharePreferenceHelper.getPreferences(SAVED_THEME_STYLE, MainActivity.this);
+		if(lastTheme!=null)
+			Configure.THEME_STYLE = (String)lastTheme;
+		if (Configure.THEME_STYLE.equals(Configure.THEME_STYLE_DAY))
 			theme.setTitle("DAY");
 		else
 			theme.setTitle("NIGHT");
 		return true;
 	}
-	 
+
 	@SuppressLint("NewApi")
 	public void initCompenents() {
 		scrollView = (ABScrollView) findViewById(R.id.scroll_container);
 
 		dictManager = new DictManager(this);
-		
+
 		initActionBar();
 	}
 
@@ -130,10 +144,12 @@ public class MainActivity extends Activity implements ActivityInterface {
 				String unitIdStr = ((String) SharePreferenceHelper
 						.getPreferences(dictNameList.get(position),
 								MainActivity.this));
-				SharePreferenceHelper.savePreferences(LAST_DICT, dictNameList.get(position), MainActivity.this);
+				SharePreferenceHelper.savePreferences(LAST_DICT,
+						dictNameList.get(position), MainActivity.this);
 				selectedDict = new Dict(MainActivity.this,
 						dictNameList.get(position));
-				if(selectedDict==null||selectedDict.getCurrentUnit()==null){
+				if (selectedDict == null
+						|| selectedDict.getCurrentUnit() == null) {
 					return false;
 				}
 				SharePreferenceHelper.savePreferences(
@@ -144,69 +160,42 @@ public class MainActivity extends Activity implements ActivityInterface {
 				LinearLayout containerlayout = (LinearLayout) MainActivity.this
 						.findViewById(R.id.fragment_container);
 				containerlayout.removeAllViews();
-//				List<Unit> needShowUnitList = new ArrayList<Unit>();
-//				List<Integer> colorList = new ArrayList<Integer>();
-				List<BoxView> boxList = new ArrayList<BoxView>();
-//				List<BOX_TYPE> boxTypeList = new ArrayList<BoxView.BOX_TYPE>();
-//				if (selectedDict.getMemoedList().size() > 0) {
-//					needShowUnitList.add(selectedDict.getMemoedList().get(0));
-//					colorList.add(getResources()
-//							.getColor(R.color.android_green));
-//					boxTypeList.add(BOX_TYPE.BOX_MEMOED);
-//				}
-//				if (selectedDict.getCurrentUnit() != null) {
-//					needShowUnitList.add(selectedDict.getCurrentUnit());
-//					colorList.add(getResources().getColor(
-//							R.color.android_yellow));
-//					boxTypeList.add(BOX_TYPE.BOX_CURR);
-//				}
-//				needShowUnitList.addAll(selectedDict.getNonMemoList());
-//				if (needShowUnitList.size() == 0)
-//					return false;
-//				for (int i = 0; i < selectedDict.getNonMemoList().size(); i++) {
-//					colorList
-//							.add(getResources().getColor(R.color.android_blue));
-//					boxTypeList.add(BOX_TYPE.BOX_LOCKED);
-//				}
 
-				//LinearLayout row = new LinearLayout(MainActivity.this);
+				List<BoxView> boxList = new ArrayList<BoxView>();
 				List<Unit> needShowUnitList = selectedDict.getUnitList();
-				for (int i = 0; i < needShowUnitList.size(); i ++) {
-					//row = new LinearLayout(MainActivity.this);
-					int color ;
+				for (int i = 0; i < needShowUnitList.size(); i++) {
+					// row = new LinearLayout(MainActivity.this);
+					int color;
 					BOX_TYPE boxtype;
-					if(needShowUnitList.get(i).getUnitState()==UNIT_STATE.NOT_START){
+					if (needShowUnitList.get(i).getUnitState() == UNIT_STATE.NOT_START) {
 						color = getResources().getColor(R.color.android_blue);
 						boxtype = BOX_TYPE.BOX_NOT_START;
-					}
-					else if(needShowUnitList.get(i).getUnitState()==UNIT_STATE.LEARNING ||
-							needShowUnitList.get(i).getUnitState()==UNIT_STATE.LEARNED_ONE_TIME){
+					} else if (needShowUnitList.get(i).getUnitState() == UNIT_STATE.LEARNING
+							|| needShowUnitList.get(i).getUnitState() == UNIT_STATE.LEARNED_ONE_TIME) {
 						color = getResources().getColor(R.color.android_yellow);
 						boxtype = BOX_TYPE.BOX_LEARNING;
-					}
-					else{
+					} else {
 						color = getResources().getColor(R.color.android_green);
 						boxtype = BOX_TYPE.BOX_FINISHED;
 					}
-//					for (int col = i; col <= i + 1
-//							&& col < needShowUnitList.size(); col++) {
-						BoxView box = generateBox(needShowUnitList.get(i),
-								color , boxtype,
-								i + 1);
-						//row.addView(box);
-						boxList.add(box);
-						
-//					}
-//					containerlayout.addView(row);
+					// for (int col = i; col <= i + 1
+					// && col < needShowUnitList.size(); col++) {
+					BoxView box = generateBox(needShowUnitList.get(i), color,
+							boxtype, i + 1);
+					// row.addView(box);
+					boxList.add(box);
+
+					// }
+					// containerlayout.addView(row);
 				}
-				for(int i=0;i<boxList.size();i+=2){
+				for (int i = 0; i < boxList.size(); i += 2) {
 					LinearLayout row = new LinearLayout(MainActivity.this);
 					row.addView(boxList.get(i));
-					if(i+1<boxList.size())
-						row.addView(boxList.get(i+1));
+					if (i + 1 < boxList.size())
+						row.addView(boxList.get(i + 1));
 					containerlayout.addView(row);
 				}
-				
+
 				wordDBHelper = new WordDBHelper(needShowUnitList.get(0)
 						.getDictName());
 				for (int i = 0; i < boxList.size(); i++) {
@@ -224,12 +213,12 @@ public class MainActivity extends Activity implements ActivityInterface {
 
 							}
 						});
-					} else  {
+					} else {
 						box.setOnClickListener(new View.OnClickListener() {
 							public void onClick(View v) {
 								final BoxView box = (BoxView) v;
 								box.randomWord(wordDBHelper);
-								
+
 								new android.app.AlertDialog.Builder(
 										MainActivity.this)
 										// Context
@@ -271,11 +260,12 @@ public class MainActivity extends Activity implements ActivityInterface {
 		};
 
 		dictNameList = dictManager.getDictList();
-		Object lastDaict = SharePreferenceHelper.getPreferences(LAST_DICT, this);
-		if(lastDaict!=null && dictNameList.contains((String)lastDaict)){
-			int pos = dictNameList.indexOf((String)lastDaict);
+		Object lastDaict = SharePreferenceHelper
+				.getPreferences(LAST_DICT, this);
+		if (lastDaict != null && dictNameList.contains((String) lastDaict)) {
+			int pos = dictNameList.indexOf((String) lastDaict);
 			dictNameList.remove(pos);
-			dictNameList.add(0, (String)lastDaict);
+			dictNameList.add(0, (String) lastDaict);
 		}
 		actionAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_dropdown_item, dictNameList);

@@ -53,7 +53,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private TextView tvWord;
 	private TextView tvPhonogram;
 	private TextView tvIgnore;
-	private TextView etPrases;
+	private TextView tvPrases;
+	private TextView tvSentences;
 	private int screenWidth;
 	private int screenHeight;
 	private int marginPixels;
@@ -68,14 +69,15 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	private Date startDate;
 	private StudyTheme currentThemeStyle;
 	private TTS tts;
-	private long lastExitTime=0;
+	private long lastExitTime = 0;
 	public static String STUDY_LAST_DICT = "study_last_dict";
 	public static String STUDY_LAST_UNIT = "study_last_unit";
+	public static final String SAVED_THEME_STYLE = "saved_theme_style";
 
 	public void onCreate(Bundle savedInstanceState) {
-		setTheme();
+		setTheme(savedInstanceState);
 		super.onCreate(savedInstanceState);
-
+		
 		setContentView(R.layout.activity_study);
 
 		String dictName = getIntent().getExtras().getString("dictName");
@@ -111,44 +113,49 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		showNextWord();
 		onStateChange();
 		initButtons();
+		saveLastState();
+
+	}
+	private void saveLastState(){
 		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
 				.getUnit().getDictName(), this);
 		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
 				.getUnit().getUnitId() + "", this);
-
+		SharePreferenceHelper.savePreferences(SAVED_THEME_STYLE,Configure.THEME_STYLE, this);
+		
 	}
-
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		Gson g = new Gson();
 		String unitStr = g.toJson(controler.getUnit());
 		outState.putString("unit", unitStr);
 		outState.putInt("showdPosition", controler.getShowedPosition());
+		outState.putString(SAVED_THEME_STYLE, Configure.THEME_STYLE);
 	}
+
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event){  
-		if(keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
-			if(System.currentTimeMillis() - lastExitTime > 2000){
-				Toast.makeText(getApplicationContext(), "再按一次返回主界面",Toast.LENGTH_SHORT).show();                                  
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK
+				&& event.getAction() == KeyEvent.ACTION_DOWN) {
+			if (System.currentTimeMillis() - lastExitTime > 2000) {
+				Toast.makeText(getApplicationContext(), "再按一次返回主界面",
+						Toast.LENGTH_SHORT).show();
 				lastExitTime = System.currentTimeMillis();
-			}else{
+			} else {
 				onPause();
 				finish();
 				System.exit(0);
 			}
-			return true;  
+			return true;
 		}
-		return super.onKeyDown(keyCode, event);  
+		return super.onKeyDown(keyCode, event);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		saveLastState();
 		controler.saveCurrentUnitToFile();
-		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
-				.getUnit().getDictName(), this);
-		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
-				.getUnit().getUnitId() + "", this);
 		controler.close();
 		tts.close();
 	}
@@ -157,16 +164,9 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	public void onPause() {
 		super.onPause();
 		controler.saveCurrentUnitToFile();
-		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
-				.getUnit().getDictName(), this);
-		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
-				.getUnit().getUnitId() + "", this);
+		saveLastState();
 	}
- 
-	@Override
-	public void onResume() {
-		super.onResume();
-	}
+
 	@SuppressWarnings("unused")
 	@SuppressLint("NewApi")
 	@Override
@@ -219,7 +219,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 									String edittedText = et.getText()
 											.toString();
 									current.updateParaphrases(edittedText);
-									etPrases.setText(current
+									tvPrases.setText(current
 											.paraphrasesToString());
 									arg0.dismiss();
 								}
@@ -244,6 +244,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				ActionBar.DISPLAY_HOME_AS_UP);
 		return true;
 	}
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -301,6 +302,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		ThemeDay.phrasesTextColor = R.color.android_black;
 		ThemeDay.horizontalSplitLineColor = android.R.color.holo_blue_light;
 		ThemeDay.verticleSplitLineColor = R.color.android_light_white;
+		ThemeDay.sentsTextColor = R.color.soft_grey;
 
 		ThemeNight = new StudyTheme();
 		ThemeNight.contentBlockBg = R.color.android_light_black;
@@ -312,6 +314,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		ThemeNight.horizontalSplitLineColor = R.color.android_light_green;
 		ThemeNight.verticleSplitLineColor = R.color.android_dark_grey;
 
+		ThemeNight.sentsTextColor = R.color.soft_grey;
+		
 		currentThemeStyle = ThemeDay;
 	}
 
@@ -322,9 +326,11 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		tvWord = (TextView) findViewById(R.id.study_word);
 		tvPhonogram = (TextView) findViewById(R.id.study_phonogram);
 		tvIgnore = (TextView) findViewById(R.id.study_tv_ignore);
-		etPrases = (TextView) findViewById(R.id.study_edit_phrases);
+		tvPrases = (TextView) findViewById(R.id.study_edit_phrases);
 		splitLine = (LinearLayout) findViewById(R.id.study_split_line);
 		progressBar = (ProgressBar) findViewById(R.id.study_progress);
+		tvSentences = (TextView) findViewById(R.id.study_sentences);
+
 		// progressBar = (ProgressBar) findViewById(R.id.study_progressbar);
 	}
 
@@ -355,7 +361,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 		tvWord.setTypeface(dejaVuSans);
 		tvPhonogram.setTypeface(dejaVuSans);
-		
 
 	}
 
@@ -457,6 +462,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				currentThemeStyle.ignoreTextColor));
 		splitLine.setBackgroundColor(getResources().getColor(
 				currentThemeStyle.horizontalSplitLineColor));
+
 	}
 
 	@SuppressLint("NewApi")
@@ -594,7 +600,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 	@SuppressLint("NewApi")
 	public void togglePhrasesViews() {
-		if (etPrases.getVisibility() == View.GONE) {
+		if (tvPrases.getVisibility() == View.GONE) {
 			showPhrasesViews();
 		} else {
 			removePhrasesViews(true);
@@ -615,24 +621,37 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				e.printStackTrace();
 			}
 		}
-		etPrases.setVisibility(View.GONE);
+		tvPrases.setVisibility(View.GONE);
+		tvSentences.setVisibility(View.GONE);
 	}
 
 	@SuppressLint("NewApi")
 	public void showPhrasesViews() {
 		// phrasesBlock.removeAllViews();
-		etPrases.setText(current.paraphrasesToString());
-		etPrases.setTypeface(dejaVuSans);
-		etPrases.setTextSize(20);
-		etPrases.setTextColor(getResources().getColor(
+		tvPrases.setText(current.paraphrasesToString());
+		tvPrases.setTypeface(dejaVuSans);
+		tvPrases.setTextSize(20);
+		tvPrases.setTextColor(getResources().getColor(
 				currentThemeStyle.phrasesTextColor));
-		etPrases.setVisibility(View.VISIBLE);
-		etPrases.setOnClickListener(new View.OnClickListener() {
+		tvPrases.setVisibility(View.VISIBLE);
+		tvPrases.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				togglePhrasesViews();
 			}
 		});
-
+		if (current.sentencesString(false) != null && Configure.SHOW_SENTENCES) {
+			tvSentences.setText(current.sentencesString(true));
+			tvSentences.setTypeface(dejaVuSans);
+			tvSentences.setTextSize(18);
+			tvSentences.setTextColor(getResources().getColor(
+					currentThemeStyle.sentsTextColor));
+			tvSentences.setVisibility(View.VISIBLE);
+			tvSentences.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View v) {
+					togglePhrasesViews();
+				}
+			});
+		}
 		ObjectAnimator alpha = ObjectAnimator.ofFloat(phrasesBlock, "alpha",
 				0f, 1f);
 		alpha.setDuration(300);
@@ -671,9 +690,14 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		return button;
 	}
 
-	private void setTheme() {
+	private void setTheme(Bundle savedInstanceState) {
 		initThemes();
-		if (Configure.THEME_STYLE == Configure.THEME_STYLE_NIGHT) {
+ 
+		String lastTheme = (String) SharePreferenceHelper.getPreferences(SAVED_THEME_STYLE, StudyActivity.this);
+		if(lastTheme!=null&&savedInstanceState!=null){
+			Configure.THEME_STYLE = lastTheme;
+		}
+		if (Configure.THEME_STYLE.equals(Configure.THEME_STYLE_NIGHT)) {
 			currentThemeStyle = ThemeNight;
 			this.setTheme(android.R.style.Theme_Holo);
 		} else {
@@ -694,6 +718,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		public int wordTextColor;
 		public int phonogramTextColor;
 		public int phrasesTextColor;
+		public int sentsTextColor;
 		public int buttonColor;
 		public int buttonStyle;
 		public int horizontalSplitLineColor;

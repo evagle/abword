@@ -109,16 +109,10 @@ public class StudyControler {
 	}
 
 	public WordItem next(STUDY_TYPE studyType) {
-//		if (showedPosition + 1 < unit.getShowedWords().size()) {
-//			current = unit.getShowedWords().get(showedPosition++);
-//			return current;
-//		} else 
 		if (studyType.equals(STUDY_TYPE.LEARN_NEW)) {
 			if (unit.getNonMemodWords().size() > 0) {
 				current = unit.getNonMemodWords().get(0);
 				current = wordDBHelper.getWord(current.getWord());
-				unit.getNonMemodWords().remove(0);
-				unit.getShowedWords().add(current);
 				showedPosition++;
 				return current;
 			} else
@@ -127,8 +121,6 @@ public class StudyControler {
 			if (unit.getMemodWords().size() > 0) {
 				current = unit.getMemodWords().get(0);
 				current = wordDBHelper.getWord(current.getWord());
-				unit.getMemodWords().remove(0);
-				unit.getShowedWords().add(current);
 				showedPosition++;
 				return current;
 			} else
@@ -138,7 +130,7 @@ public class StudyControler {
 	}
 	public String  getLastNWords(int n){
 		String wordlst = "";
-		for(int i=Math.max(0, unit.getShowedWords().size()-1-n);i<=unit.getShowedWords().size()-2;i++)
+		for(int i=Math.max(0, unit.getShowedWords().size()-n);i<unit.getShowedWords().size();i++)
 		{
 			wordlst+=unit.getShowedWords().get(i).getWord()+"\n";
 		}
@@ -204,9 +196,15 @@ public class StudyControler {
 							effectMap.get(gradeStr));
 				}
 			}).start();
-			
-			
+			unit.getShowedWords().add(w);
+			if(unit.getNonMemodWords().size()>0&&w.getWord().equals(unit.getNonMemodWords().get(0).getWord())){
+				unit.getNonMemodWords().remove(0);
+			}else if(unit.getMemodWords().size()>0&&w.getWord().equals(unit.getMemodWords().get(0).getWord()) ){
+				unit.getMemodWords().remove(0);
+			}
 		}
+		
+		
 		Date e = new Date();
 		Log.d("finishMemoWord ","Cost(ms): "+TimeHelper.getDiffMilliSec(e, s));
 	}

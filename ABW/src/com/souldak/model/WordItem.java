@@ -35,6 +35,7 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	private double interval;//time between nextMemoDate and lastMemoDate
 	private double memoEffect;//memory effect
 	private int ingnore;
+	private List<String> lines;
 	
 	public WordItem(){
 		paraphrases=new ArrayList<HashMap<String,String>>();
@@ -138,11 +139,40 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	}
 	public String paraphrasesToString(){
 		StringBuilder builder = new StringBuilder();
-		for(HashMap<String, String> para : paraphrases){
-			//builder.append("pos#");
-			builder.append(para.get("pos")+"\n");
-			//builder.append("acc#");
-			builder.append(para.get("acc")+"\n");
+		if(paraphrases!=null&&paraphrases.size()>0){
+			for(HashMap<String, String> para : paraphrases){
+				builder.append(para.get("pos")+"\n");
+				builder.append(para.get("acc")+"\n");
+			}
+		}else if( lines!=null){
+			for(String s:lines)
+				builder.append(s+"\n");
+		}
+		return builder.toString();
+	}
+	public String sentencesString(boolean withTrans){
+		StringBuilder builder = new StringBuilder();
+		if(sents==null||sents.size()==0)
+			return null;
+		builder.append("Examples:\n");
+		int i = 1;
+		for(HashMap<String, String> sent : sents){
+			if(i>2)
+				break;
+			builder.append(sent.get("orig")+"\n");
+			if(withTrans)
+				builder.append(sent.get("trans")+"\n");
+			i++;
+		}
+		return builder.toString();
+	}
+	public String sentencesStringWithoutTrans(){
+		StringBuilder builder = new StringBuilder();
+		if(sents.size()==0)
+			return null;
+		builder.append("Ex:");
+		for(HashMap<String, String> sent : sents){
+			builder.append(sent.get("orig")+"\n");
 		}
 		return builder.toString();
 	}
@@ -300,6 +330,12 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 	}
 	public void setSents(List<HashMap<String, String>> sents) {
 		this.sents = sents;
+	}
+	public List<String> getLines() {
+		return lines;
+	}
+	public void setLines(List<String> lines) {
+		this.lines = lines;
 	}
 	public int compareTo(WordItem another) {
 		if(interval > another.interval)

@@ -58,10 +58,10 @@ public class Unit implements Comparable<Unit> {
 	public List<String> wordListToString() {
 		//The last one may not be memorized because of a sudden exit
 		//背诵单词的界面可以在没点的结果的时候退出
-		if(showedWords.size()>0&&showedWords.get(showedWords.size()-1).getMemoList().size()==0){
-			nonMemodWords.add(showedWords.get(showedWords.size()-1));
-			showedWords.remove(showedWords.size()-1);
-		}
+//		if(showedWords.size()>0&&showedWords.get(showedWords.size()-1).getMemoList().size()==0){
+//			nonMemodWords.add(showedWords.get(showedWords.size()-1));
+//			showedWords.remove(showedWords.size()-1);
+//		}
 		List<WordItem> memoedTmp = new ArrayList<WordItem>();
 		memoedTmp.addAll(memodWords);
 		memoedTmp.addAll(showedWords);

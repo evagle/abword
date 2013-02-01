@@ -18,6 +18,8 @@ public class Configure {
 	public static final String THEME_STYLE_YELLOW="yellow";
 	public static final String THEME_STYLE_GREEN="green";
 	public static String THEME_STYLE=THEME_STYLE_DAY;
+	
+	public static final boolean SHOW_SENTENCES = true;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

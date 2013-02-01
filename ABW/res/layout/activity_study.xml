@@ -81,6 +81,13 @@
                     android:layout_gravity="left"
                     android:visibility="gone" >
                 </TextView>
+                <TextView
+                    android:id="@+id/study_sentences"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:visibility="gone" >
+                </TextView>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

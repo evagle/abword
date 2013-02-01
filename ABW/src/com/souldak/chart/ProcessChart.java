@@ -76,6 +76,8 @@ public class ProcessChart extends AbstractDemoChart {
 			}
 		nonMemoCount += unit.getNonMemodWords().size();
 		finishedCount = unit.getTotalWordCount() - ignoreCount - memorizingCount -nonMemoCount;
+		if(finishedCount<0)
+			finishedCount=0;
 		//不定时更新memoed count，修正错误
 		if(new Random().nextInt(100)<50){
 			UnitDBHelper unitDBHelper = new UnitDBHelper(unit.getDictName());
