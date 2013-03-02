@@ -604,7 +604,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			showPhrasesViews();
 		} else {
 			removePhrasesViews(true);
-
 		}
 	}
 

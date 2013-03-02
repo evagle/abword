@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import com.souldak.config.Configure;
 import com.souldak.util.ChineseJudger;
 import com.souldak.util.TimeHelper;
 
@@ -141,8 +142,16 @@ public class WordItem implements Comparable<WordItem>,Serializable{
 		StringBuilder builder = new StringBuilder();
 		if(paraphrases!=null&&paraphrases.size()>0){
 			for(HashMap<String, String> para : paraphrases){
-				builder.append(para.get("pos")+"\n");
-				builder.append(para.get("acc")+"\n");
+				String key=para.get("pos");
+				if(Configure.FIELDS_TO_SHOW.containsKey(key)&&Configure.FIELDS_TO_SHOW.get(key)==1){
+					builder.append("["+para.get("pos")+"] ");
+					builder.append(para.get("acc")+"\n");
+				}
+				if(!Configure.FIELDS_TO_SHOW.containsKey(key)){
+					builder.append(para.get("pos")+"\n");
+					builder.append(para.get("acc")+"\n");
+				} 
+				
 			}
 		}else if( lines!=null){
 			for(String s:lines)

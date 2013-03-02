@@ -1,6 +1,8 @@
 package com.souldak.config;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.List;
 
 import android.os.Environment;
 
@@ -18,7 +20,20 @@ public class Configure {
 	public static final String THEME_STYLE_YELLOW="yellow";
 	public static final String THEME_STYLE_GREEN="green";
 	public static String THEME_STYLE=THEME_STYLE_DAY;
-	
+	public static HashMap<String,Integer> FIELDS_TO_SHOW = new HashMap<String, Integer>(){
+		{
+			put("考法1",1);
+			put("考法2",1);
+			put("考法3",1);
+			put("考法4",1);
+			put("例",0);
+			put("近",0);
+			put("反",0);
+			put("派",0);
+			put("考法",1);
+			
+		}
+	};
 	public static final boolean SHOW_SENTENCES = true;
 	//make directories before use it
 	static {
