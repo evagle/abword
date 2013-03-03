@@ -140,4 +140,7 @@ public class DictToDB {
 	public void addLoadedFile(String filename,String value){
 		SharePreferenceHelper.savePreferences("DictToDB_"+filename, value, context);
 	}
+	public void removeLoadedFile(String filename){
+		SharePreferenceHelper.removePreferences("DictToDB_"+filename, context);
+	}
 }

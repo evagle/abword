@@ -76,6 +76,10 @@ public class LoadDictsActivity extends Activity implements ActivityInterface{
 		List<String> dictList = ABFileHelper.list(Configure.APP_DICTS_PATH);
 		List<LoadDictAdapterModel> list = new ArrayList<LoadDictAdapterModel>();
 		for(String s:loadedList){
+			if(!dictList.contains(s)){
+				dictToDB.removeLoadedFile(s);
+				continue;
+			}
 			LoadDictAdapterModel model= new LoadDictAdapterModel();
 			model.setDictPath(s);
 			model.setWordNum(ABFileHelper.getLineCount(s));
