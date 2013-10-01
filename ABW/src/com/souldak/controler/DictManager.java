@@ -8,31 +8,40 @@ import java.util.List;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.souldak.db.DBFactory;
+import com.souldak.db.DictDBHelper;
+import com.souldak.model.DictModel;
 import com.souldak.util.SharePreferenceHelper;
 
 
 public class DictManager {
 	//dictname--unitcount pair
-	public static HashMap<String,Integer> dictIndexes;
+	public static HashMap<String,DictModel> dictIndexes;
 	private Context context;
 	private  static final String DICT_INDEX_MAP = "dict_index_map";
 	private Gson gson=new Gson();
+	private DictDBHelper dictDBHelper;
 	public DictManager(Context context){
 		this.context = context;
-		dictIndexes = gson.fromJson((String) SharePreferenceHelper.getPreferences(DICT_INDEX_MAP, context),HashMap.class);
+		dictDBHelper = new DictDBHelper();
+		dictIndexes = dictDBHelper.getAll();
 		if(dictIndexes==null)
-			dictIndexes = new HashMap<String, Integer>();
+			dictIndexes = new HashMap<String, DictModel>();
 	}
-	public void addDict(String dictName,int unitCount){
-		dictIndexes.put(dictName, unitCount);
-		saveDictIndexes();
+	public void addDict(String dictName,int unitCount,int wordCount){
+		DictModel dict = new DictModel(dictName,unitCount,wordCount);
+		if(!hasDict(dictName)){
+			dictIndexes.put(dictName, dict);
+			dictDBHelper.insert(dict);
+		}
 	}
 	public void deleteDict(String dictName){
 		dictIndexes.remove(dictName);
-		saveDictIndexes();
+		dictDBHelper.deleteDict(dictName);
 	}
 	 
 	public void saveDictIndexes(){
+		
 		String value = gson.toJson(dictIndexes);
 		SharePreferenceHelper.savePreferences(DICT_INDEX_MAP, value, context);
 	}
@@ -44,17 +53,7 @@ public class DictManager {
 		Collections.sort(list);
 		return list;
 	}
-	/**
-	 * @param dictName
-	 * @return a dict if exists, null otherwise
-	 */
-//	public Dict getDict(String dictName){
-//		if(dictIndexes==null)
-//			return null;
-//		String path = dictIndexes.get(dictName);
-//		Dict dict = new Dict(context, dictName, path);
-//		return dict;
-//	}
+ 
 	public boolean hasDict(String dictName){
 		if(dictIndexes==null)
 			return false;

@@ -349,13 +349,6 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		dejaVuSans = Typeface.createFromAsset(getAssets(),
 				"fonts/DejaVuSans.ttf");
 
-		// GradientDrawable background = (GradientDrawable) getResources()
-		// .getDrawable(R.drawable.rounded_rect);
-		// background.setColor(getResources().getColor(
-		// currentThemeStyle.contentBlockBg));
-		// background.setAlpha(225);
-		// background.setCornerRadius(4);
-		// contentBlock.setBackground(background);
 
 		LayoutParams params = new LayoutParams(screenWidth - marginPixels,
 				screenHeight - buttonHeight - marginPixels * 4 + 40);

@@ -57,7 +57,6 @@ public class DictToDB {
 		String ret = "";
 		String tmp = null;
 		List<WordItem> list=new ArrayList<WordItem>();
-
 		HashMap<Integer,Integer> unitWordCount =new HashMap<Integer, Integer>();
 		try {
 			while ((tmp = reader.readLine()) != null) {
@@ -89,7 +88,7 @@ public class DictToDB {
 		boolean hasDict = dictManager.hasDict(dictName);
 		//Add dict to dictMap
 		if(!hasDict)
-			dictManager.addDict(dictName,unitWordCount.size());
+			dictManager.addDict(dictName,unitWordCount.size(),list.size());
 		
 		wordDBHelper = new WordDBHelper(dictName);
 		unitDBHelper = new UnitDBHelper(dictName);

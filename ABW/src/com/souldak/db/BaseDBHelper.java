@@ -128,7 +128,7 @@ public class BaseDBHelper {
 	public Cursor query(String queryStr){
 		return db.rawQuery(queryStr, null);
 	}
-	public void delete(Context context, String whereClause,
+	public boolean delete( String whereClause,
 			String[] whereArgs) {
 		// SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
 		// Configure.DATABASE_DICT_STORAGE, null);
@@ -136,10 +136,12 @@ public class BaseDBHelper {
 			db.delete(table, whereClause, whereArgs);
 			Log.i("DBHelper", "delete from table " + table + " where "
 					+ whereClause);
+			return true;
 		} catch (Exception e) {
 			Log.e("DBHelper", "delete from table " + table + " failed"
 					+ " where " + whereClause + " ." + e.getMessage());
 		}
+		return false;
 		// db.close();
 	}
 }
