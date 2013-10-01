@@ -27,14 +27,14 @@ public class Configure {
 			put("考法3",1);
 			put("考法4",1);
 			put("例",0);
-			put("近",0);
-			put("反",0);
+			put("近",1);
+			put("反",1);
 			put("派",0);
 			put("考法",1);
 			
 		}
 	};
-	public static final boolean SHOW_SENTENCES = true;
+	public static final boolean SHOW_SENTENCES = false;
 	//make directories before use it
 	static {
 		String[] dirs= {Configure.APP_DATA_PATH,Configure.APP_DICTS_PATH,

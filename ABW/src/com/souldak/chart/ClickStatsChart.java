@@ -45,7 +45,8 @@ public class ClickStatsChart extends AbstractDemoChart {
 		ClickStatsDBHelper helper = new ClickStatsDBHelper();
 		List<ClickStatsItem> list = helper.queryRange(
 				TimeHelper.subDate(new Date(),MAX_SHOW_DAY_NUM), new Date());
-		
+		if(list==null)
+			list = new ArrayList<ClickStatsItem>();
 		Date today = TimeHelper.floorDate(new Date());
 
 		if (list.size() == 0) {

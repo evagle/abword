@@ -148,7 +148,11 @@ public class ABFileHelper {
 			return 0;
 		return lnr.getLineNumber();
 	}
-
+	public static void rewriteFile(String fileName, String content) {
+		List<String> list= new ArrayList<String>();
+		list.add(content);
+		rewriteFile(fileName, list);
+	}
 	public static void rewriteFile(String fileName, List<String> content) {
 		try {
 			FileWriter writer = new FileWriter(fileName, false);

@@ -9,6 +9,7 @@ import java.util.Random;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.souldak.config.Configure;
 import com.souldak.config.ConstantValue.STUDY_TYPE;
 import com.souldak.db.ClickStatsDBHelper;
@@ -68,14 +69,28 @@ public class StudyControler {
 			list = ABFileHelper.readLines(Configure.APP_DATA_PATH
 					+ CURRENT_UNIT_WORDS + dictName + "_" + unit.getUnitId());
 		}
-		unit.init();
-		if (list == null || !unit.parseFromString(list))
+//		unit.init();
+//		if (list == null || !)
+//			unit.initWordsList();
+		if(list!=null && list.size()==4){
+			unit.parseFromString(list);
+		}
+		else if( list==null || list.size()==0 ){
+			unit.init();
 			unit.initWordsList();
+		}else{
+			Gson g=new Gson();
+			unit = g.fromJson(list.get(0), Unit.class);
+		}
+		
 	}
 
 	public void saveCurrentUnitToFile() {
+//		ABFileHelper.rewriteFile(Configure.APP_DATA_PATH + CURRENT_UNIT_WORDS
+//				+ dictName + "_" + unit.getUnitId(), unit.wordListToString());
+		Gson g=new Gson();
 		ABFileHelper.rewriteFile(Configure.APP_DATA_PATH + CURRENT_UNIT_WORDS
-				+ dictName + "_" + unit.getUnitId(), unit.wordListToString());
+				+ dictName + "_" + unit.getUnitId(), g.toJson(unit));
 	}
 
 	public int getProgress(STUDY_TYPE type) {
@@ -113,6 +128,10 @@ public class StudyControler {
 			if (unit.getNonMemodWords().size() > 0) {
 				current = unit.getNonMemodWords().get(0);
 				current = wordDBHelper.getWord(current.getWord());
+				if(current==null){
+					unit.getNonMemodWords().remove(0);
+					return next(studyType);
+				}
 				showedPosition++;
 				return current;
 			} else
@@ -128,11 +147,20 @@ public class StudyControler {
 		}
 		return null;
 	}
-	public String  getLastNWords(int n){
+	public String  getLastNWords(int n,boolean showTranslation){
 		String wordlst = "";
 		for(int i=Math.max(0, unit.getShowedWords().size()-n);i<unit.getShowedWords().size();i++)
 		{
-			wordlst+=unit.getShowedWords().get(i).getWord()+"\n";
+			WordItem wi=unit.getShowedWords().get(i);
+			wordlst+=wi.getWord();
+			if(showTranslation){
+				wordlst+="：";
+				for(HashMap<String ,String> map :wi.getParaphrases()){
+					wordlst+=" "+map.get("pos")+" ";
+					wordlst+=map.get("acc").trim()+"  ";
+				}
+			}
+			wordlst+="\n";
 		}
 		return wordlst;
 	}

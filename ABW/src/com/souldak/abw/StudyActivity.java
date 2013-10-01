@@ -1,5 +1,6 @@
 package com.souldak.abw;
 
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.List;
 
@@ -77,7 +78,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 	public void onCreate(Bundle savedInstanceState) {
 		setTheme(savedInstanceState);
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.activity_study);
 
 		String dictName = getIntent().getExtras().getString("dictName");
@@ -116,14 +117,17 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		saveLastState();
 
 	}
-	private void saveLastState(){
+
+	private void saveLastState() {
 		SharePreferenceHelper.savePreferences(STUDY_LAST_DICT, controler
 				.getUnit().getDictName(), this);
 		SharePreferenceHelper.savePreferences(STUDY_LAST_UNIT, controler
 				.getUnit().getUnitId() + "", this);
-		SharePreferenceHelper.savePreferences(SAVED_THEME_STYLE,Configure.THEME_STYLE, this);
-		
+		SharePreferenceHelper.savePreferences(SAVED_THEME_STYLE,
+				Configure.THEME_STYLE, this);
+
 	}
+
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		Gson g = new Gson();
@@ -315,7 +319,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		ThemeNight.verticleSplitLineColor = R.color.android_dark_grey;
 
 		ThemeNight.sentsTextColor = R.color.soft_grey;
-		
+
 		currentThemeStyle = ThemeDay;
 	}
 
@@ -431,7 +435,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 				AlertDialog.Builder builder = new AlertDialog.Builder(
 						StudyActivity.this);
 				builder.setTitle("Last 3 words");
-				builder.setMessage(controler.getLastNWords(3));
+				builder.setMessage(controler.getLastNWords(3, false));
 				AlertDialog dialog = builder.create();
 				dialog.show();
 			}
@@ -549,9 +553,42 @@ public class StudyActivity extends Activity implements ActivityInterface {
 			AlertDialog.Builder builder = new AlertDialog.Builder(
 					StudyActivity.this);
 			builder.setTitle("REVIEW");
-			builder.setMessage(controler.getLastNWords(RECITE_PERIOD));
+			builder.setMessage(controler.getLastNWords(RECITE_PERIOD, false));
+			builder.setPositiveButton("TRANSLATE",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							AlertDialog d = (AlertDialog) dialog;
+							d.setMessage(controler.getLastNWords(RECITE_PERIOD,
+									true));
+							try {
+								Field field = dialog.getClass().getSuperclass()
+										.getDeclaredField("mShowing");
+								field.setAccessible(true);
+								// 设置mShowing值，欺骗android系统
+								field.set(dialog, false);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
+			builder.setNegativeButton("OK",
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							try {
+								Field field = dialog.getClass().getSuperclass()
+										.getDeclaredField("mShowing");
+								field.setAccessible(true);
+								// 设置mShowing值，欺骗android系统
+								field.set(dialog, true);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					});
 			AlertDialog dialog = builder.create();
 			dialog.show();
+			 
+			dialog.setCanceledOnTouchOutside(true);
 		}
 	}
 
@@ -691,9 +728,10 @@ public class StudyActivity extends Activity implements ActivityInterface {
 
 	private void setTheme(Bundle savedInstanceState) {
 		initThemes();
- 
-		String lastTheme = (String) SharePreferenceHelper.getPreferences(SAVED_THEME_STYLE, StudyActivity.this);
-		if(lastTheme!=null&&savedInstanceState!=null){
+
+		String lastTheme = (String) SharePreferenceHelper.getPreferences(
+				SAVED_THEME_STYLE, StudyActivity.this);
+		if (lastTheme != null && savedInstanceState != null) {
 			Configure.THEME_STYLE = lastTheme;
 		}
 		if (Configure.THEME_STYLE.equals(Configure.THEME_STYLE_NIGHT)) {
