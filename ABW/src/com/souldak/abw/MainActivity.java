@@ -1,7 +1,6 @@
 package com.souldak.abw;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import android.animation.ObjectAnimator;
@@ -19,7 +18,6 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
-import com.souldak.chart.ClickStatsChart;
 import com.souldak.config.Configure;
 import com.souldak.config.ConstantValue.STUDY_TYPE;
 import com.souldak.controler.DictManager;
@@ -27,18 +25,16 @@ import com.souldak.db.WordDBHelper;
 import com.souldak.model.Dict;
 import com.souldak.model.Unit;
 import com.souldak.model.Unit.UNIT_STATE;
-import com.souldak.util.ABFileHelper;
 import com.souldak.util.SharePreferenceHelper;
-import com.souldak.util.TimeHelper;
 import com.souldak.view.ABScrollView;
 import com.souldak.view.BoxView;
-import com.souldak.view.ChartDialog;
 import com.souldak.view.BoxView.BOX_TYPE;
+import com.souldak.view.ChartDialog;
 
 public class MainActivity extends Activity implements ActivityInterface {
 	private ActionBar actionBar;
 	private DictManager dictManager;
-	// private Dict currentDict;
+	@SuppressWarnings("rawtypes")
 	private ArrayAdapter actionAdapter;
 	private List<String> dictNameList;
 	private Dict selectedDict;
@@ -52,9 +48,11 @@ public class MainActivity extends Activity implements ActivityInterface {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		InstallDB installation = new InstallDB(this);
+		installation.install();
 		initCompenents();
 		initListeners();
-
+		
 	}
 
 	@SuppressLint("NewApi")
@@ -92,9 +90,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 
 		theme.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
 			public boolean onMenuItemClick(MenuItem item) {
-				// Object lastTheme =
-				// SharePreferenceHelper.getPreferences(SAVED_THEME_STYLE,
-				// MainActivity.this);
 
 				if (Configure.THEME_STYLE.equals(Configure.THEME_STYLE_DAY)) {
 					Configure.THEME_STYLE = Configure.THEME_STYLE_NIGHT;
@@ -123,7 +118,7 @@ public class MainActivity extends Activity implements ActivityInterface {
 	public void initCompenents() {
 		scrollView = (ABScrollView) findViewById(R.id.scroll_container);
 
-		dictManager = new DictManager(this);
+		dictManager = new DictManager();
 
 		initActionBar();
 	}
@@ -141,9 +136,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 		OnNavigationListener mOnNavigationListener = new OnNavigationListener() {
 
 			public boolean onNavigationItemSelected(int position, long itemId) {
-				String unitIdStr = ((String) SharePreferenceHelper
-						.getPreferences(dictNameList.get(position),
-								MainActivity.this));
 				SharePreferenceHelper.savePreferences(LAST_DICT,
 						dictNameList.get(position), MainActivity.this);
 				selectedDict = new Dict(MainActivity.this,
@@ -164,7 +156,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 				List<BoxView> boxList = new ArrayList<BoxView>();
 				List<Unit> needShowUnitList = selectedDict.getUnitList();
 				for (int i = 0; i < needShowUnitList.size(); i++) {
-					// row = new LinearLayout(MainActivity.this);
 					int color;
 					BOX_TYPE boxtype;
 					if (needShowUnitList.get(i).getUnitState() == UNIT_STATE.NOT_START) {
@@ -178,15 +169,10 @@ public class MainActivity extends Activity implements ActivityInterface {
 						color = getResources().getColor(R.color.android_green);
 						boxtype = BOX_TYPE.BOX_FINISHED;
 					}
-					// for (int col = i; col <= i + 1
-					// && col < needShowUnitList.size(); col++) {
 					BoxView box = generateBox(needShowUnitList.get(i), color,
 							boxtype, i + 1);
-					// row.addView(box);
 					boxList.add(box);
 
-					// }
-					// containerlayout.addView(row);
 				}
 				for (int i = 0; i < boxList.size(); i += 2) {
 					LinearLayout row = new LinearLayout(MainActivity.this);
@@ -249,7 +235,6 @@ public class MainActivity extends Activity implements ActivityInterface {
 													}
 												}).show();
 
-								//
 							}
 						});
 					}

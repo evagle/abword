@@ -15,14 +15,9 @@ import com.souldak.util.SharePreferenceHelper;
 
 
 public class DictManager {
-	//dictname--unitcount pair
 	public static HashMap<String,DictModel> dictIndexes;
-	private Context context;
-	private  static final String DICT_INDEX_MAP = "dict_index_map";
-	private Gson gson=new Gson();
 	private DictDBHelper dictDBHelper;
-	public DictManager(Context context){
-		this.context = context;
+	public DictManager(){
 		dictDBHelper = new DictDBHelper();
 		dictIndexes = dictDBHelper.getAll();
 		if(dictIndexes==null)
@@ -40,11 +35,6 @@ public class DictManager {
 		dictDBHelper.deleteDict(dictName);
 	}
 	 
-	public void saveDictIndexes(){
-		
-		String value = gson.toJson(dictIndexes);
-		SharePreferenceHelper.savePreferences(DICT_INDEX_MAP, value, context);
-	}
 	public  List<String> getDictList(){
 		List<String> list = new ArrayList<String>();
 		if(dictIndexes!=null){

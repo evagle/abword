@@ -267,35 +267,8 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		}
 	}
 
+	@SuppressLint("InlinedApi")
 	public void initThemes() {
-		// ThemeYellow = new StudyTheme();
-		// ThemeYellow.contentBlockBg = R.color.android_light_yellow;
-		// ThemeYellow.buttonStyle = R.drawable.grey_button;
-		// ThemeYellow.ignoreTextColor = R.color.soft_grey;
-		// ThemeYellow.wordTextColor = R.color.android_black;
-		// ThemeYellow.phonogramTextColor = R.color.android_dark_grey;
-		// ThemeYellow.phrasesTextColor = R.color.android_black;
-		// ThemeYellow.horizontalSplitLineColor =
-		// android.R.color.holo_blue_light;
-		//
-		// ThemeGrey = new StudyTheme();
-		// ThemeGrey.contentBlockBg = R.color.android_light_black;
-		// ThemeGrey.buttonStyle = R.drawable.grey_button;
-		// ThemeGrey.ignoreTextColor = R.color.android_light_white;
-		// ThemeGrey.wordTextColor = R.color.android_light_white;
-		// ThemeGrey.phonogramTextColor = R.color.android_light_white;
-		// ThemeGrey.phrasesTextColor = R.color.android_light_white;
-		// ThemeGrey.horizontalSplitLineColor = R.color.android_light_green;
-		//
-		// ThemeGreen = new StudyTheme();
-		// ThemeGreen.contentBlockBg = R.color.android_light_green;
-		// ThemeGreen.buttonStyle = R.drawable.green_button;
-		// ThemeGreen.ignoreTextColor = R.color.soft_grey;
-		// ThemeGreen.wordTextColor = R.color.android_black;
-		// ThemeGreen.phonogramTextColor = R.color.android_dark_grey;
-		// ThemeGreen.phrasesTextColor = R.color.android_black;
-		// ThemeGreen.horizontalSplitLineColor =
-		// android.R.color.holo_blue_light;
 
 		ThemeDay = new StudyTheme();
 		ThemeDay.contentBlockBg = R.color.android_light_yellow;
@@ -654,6 +627,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		tvSentences.setVisibility(View.GONE);
 	}
 
+	@SuppressWarnings("unused")
 	@SuppressLint("NewApi")
 	public void showPhrasesViews() {
 		// phrasesBlock.removeAllViews();
@@ -719,6 +693,7 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		return button;
 	}
 
+	@SuppressLint("InlinedApi")
 	private void setTheme(Bundle savedInstanceState) {
 		initThemes();
 
@@ -736,9 +711,9 @@ public class StudyActivity extends Activity implements ActivityInterface {
 		}
 	}
 
-	private static StudyTheme ThemeYellow;
-	private static StudyTheme ThemeGrey;
-	private static StudyTheme ThemeGreen;
+//	private static StudyTheme ThemeYellow;
+//	private static StudyTheme ThemeGrey;
+//	private static StudyTheme ThemeGreen;
 	private static StudyTheme ThemeDay;
 	private static StudyTheme ThemeNight;
 

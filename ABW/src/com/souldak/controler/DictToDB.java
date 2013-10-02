@@ -34,7 +34,7 @@ public class DictToDB {
 	private UnitDBHelper unitDBHelper;
 	public DictToDB(Context context) {
 		this.context = context;
-		dictManager = new DictManager(context);
+		dictManager = new DictManager();
 		 
 	}
 

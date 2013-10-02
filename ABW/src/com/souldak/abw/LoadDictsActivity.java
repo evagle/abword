@@ -18,14 +18,12 @@ import android.widget.ListView;
 
 import com.souldak.adapter.LoadDictAdapter;
 import com.souldak.config.Configure;
-import com.souldak.controler.DictManager;
 import com.souldak.controler.DictToDB;
 import com.souldak.model.LoadDictAdapterModel;
 import com.souldak.util.ABFileHelper;
 
 public class LoadDictsActivity extends Activity implements ActivityInterface{
 	private ListView dictListView;
-	private DictManager dictManager;
 	private DictToDB dictToDB;
 	private LoadDictAdapter adapter;
 	private ActionBar actionBar;
@@ -33,7 +31,6 @@ public class LoadDictsActivity extends Activity implements ActivityInterface{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_load_dict);
-		dictManager = new DictManager(this);
 		dictToDB = new DictToDB(this);
 		initCompenents();
 		initListeners();

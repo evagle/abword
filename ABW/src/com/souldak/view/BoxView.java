@@ -82,15 +82,7 @@ public class BoxView extends LinearLayout{
 		
 		tvUnitNUm.setText(unit.getUnitId()+"");
 		Log.d("UNIT_NUM ","UNIT_NUM "+unit.getUnitId());
-    	//tvPhonogram.setText(unit.getDelegatedWord().getPhonogram());
-//		BufferedReader br = ABFileHelper.open(Configure.APP_SD_ROOT_PATH+"gre_phonogram1.txt");
-//		String[] xx=null;
-//		try {
-//			xx=br.readLine().trim().split("[ \t]");
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+ 
 		int memoAndIngnore= unit.getMemoedCount()+unit.getIgnoreCount();
 		if(memoAndIngnore>unit.getTotalWordCount())
 			memoAndIngnore = unit.getTotalWordCount();
